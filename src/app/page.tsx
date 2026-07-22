@@ -7,6 +7,7 @@ import Proof from "@/components/Proof";
 import CTAFooter from "@/components/CTAFooter";
 import MobileStickyCta from "@/components/MobileStickyCta";
 import ScrollReveal from "@/components/ScrollReveal";
+import BackToTop from "@/components/BackToTop";
 
 export default function Home() {
   return (
@@ -20,6 +21,7 @@ export default function Home() {
       <Proof />
       <CTAFooter />
       <MobileStickyCta />
+      <BackToTop />
     </main>
   );
 }

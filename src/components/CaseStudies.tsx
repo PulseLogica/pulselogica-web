@@ -1,4 +1,8 @@
+import Link from "next/link";
+import BulletList from "@/components/ui/BulletList";
+
 type CaseStudy = {
+  slug: string;
   title: string;
   challenge: string;
   solutionIntro: string;
@@ -9,6 +13,7 @@ type CaseStudy = {
 
 const cases: CaseStudy[] = [
   {
+    slug: "cadcc",
     title: "CADCC Operational Continuity System",
     challenge:
       "CAD Construction Corporation ran the way most project-based SMEs do — through the owner's memory, relationships, and hands-on presence. Job handoffs lived in group chats, not documents. A management layer had been tried once and quietly reverted, and output visibly dropped whenever the owner was unavailable.",
@@ -29,6 +34,7 @@ const cases: CaseStudy[] = [
       "CADCC now runs day-to-day operations without the owner physically present for every decision — the business became legible enough for someone other than the founder to run it.",
   },
   {
+    slug: "featherweight-chicken",
     title: "Featherweight Chicken Centralized Operations Rollout",
     challenge:
       'Most QSR brands scale by trial and error — each new store copies most, but not all, of how the first one operates, and "how we do things" quietly forks with every location added. FWT needed to avoid that drift before it opened beyond its first store.',
@@ -57,19 +63,6 @@ function Subsection({ label, children }: { label: string; children: React.ReactN
       </div>
       {children}
     </div>
-  );
-}
-
-function BulletList({ items }: { items: string[] }) {
-  return (
-    <ul className="space-y-2">
-      {items.map((item) => (
-        <li key={item} className="flex items-start gap-3 text-sm text-slate-400 leading-relaxed">
-          <span className="mt-2 w-1.5 h-1.5 rounded-full bg-white/20 shrink-0"></span>
-          {item}
-        </li>
-      ))}
-    </ul>
   );
 }
 
@@ -106,13 +99,13 @@ export default function CaseStudies() {
                 <p className="text-slate-400 leading-relaxed">{c.impact}</p>
               </Subsection>
 
-              <a
-                href="#"
+              <Link
+                href={`/case-studies/${c.slug}`}
                 className="mt-8 inline-block text-sm font-medium"
                 style={{ color: "#FF7A00" }}
               >
                 Read the full case study →
-              </a>
+              </Link>
             </div>
           ))}
         </div>
