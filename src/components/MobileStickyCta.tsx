@@ -9,7 +9,7 @@ export default function MobileStickyCta() {
         rel="noopener noreferrer"
         className="btn-primary block text-center text-black font-semibold text-sm py-3.5 rounded-lg"
       >
-        Book Call
+        Book Strategy Session
       </a>
     </div>
   );
