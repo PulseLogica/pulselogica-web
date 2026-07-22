@@ -1,25 +1,27 @@
 import type { Metadata } from "next";
-import { JetBrains_Mono, Source_Serif_4 } from "next/font/google";
+import { Inter, Instrument_Serif } from "next/font/google";
+
 import "./globals.css";
 
-const jetbrains = JetBrains_Mono({
+const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  variable: "--font-jetbrains",
+  weight: ["300", "400", "500", "600", "700", "800"],
+  variable: "--font-inter",
   display: "swap",
 });
 
-const sourceSerif = Source_Serif_4({
+const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
-  variable: "--font-source-serif",
+  weight: "400",
+  style: ["normal", "italic"],
+  variable: "--font-instrument-serif",
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Pulse Logica — Your Pulse. Our Logic.",
+  title: "PulseLogica — Where your pulse becomes logic.",
   description:
-    "We convert owner-dependent, undocumented SME operations into documented, AI-enabled systems that run without the owner. Philippine SME systems consultancy.",
+    "AI consulting for SMEs. We build it. We integrate it. You run the company.",
 };
 
 export default function RootLayout({
@@ -28,8 +30,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${jetbrains.variable} ${sourceSerif.variable}`}>
-      <body className="font-serif antialiased">{children}</body>
+    <html lang="en" className={`${inter.variable} ${instrumentSerif.variable}`}>
+      <body className="font-sans antialiased">{children}</body>
     </html>
   );
 }

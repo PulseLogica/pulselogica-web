@@ -1,23 +1,25 @@
 import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
-import Problem from "@/components/Problem";
-import Services from "@/components/Services";
-import Process from "@/components/Process";
+import TrustStrip from "@/components/TrustStrip";
+import Phases from "@/components/Phases";
 import CaseStudies from "@/components/CaseStudies";
-import Values from "@/components/Values";
+import Proof from "@/components/Proof";
 import CTAFooter from "@/components/CTAFooter";
+import MobileStickyCta from "@/components/MobileStickyCta";
+import ScrollReveal from "@/components/ScrollReveal";
 
 export default function Home() {
   return (
     <main>
+      <ScrollReveal />
       <Nav />
       <Hero />
-      <Problem />
-      <Services />
-      <Process />
+      <TrustStrip />
+      <Phases />
       <CaseStudies />
-      <Values />
+      <Proof />
       <CTAFooter />
+      <MobileStickyCta />
     </main>
   );
 }
