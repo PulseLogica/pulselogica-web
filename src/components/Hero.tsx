@@ -38,7 +38,7 @@ export default function Hero() {
           >
             Book Strategy Session
           </a>
-          <a href="#proof" className="btn-secondary text-white font-semibold text-[15px] px-8 py-4 rounded-lg">
+          <a href="#cases" className="btn-secondary text-white font-semibold text-[15px] px-8 py-4 rounded-lg">
             View examples
           </a>
         </div>
