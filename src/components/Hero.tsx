@@ -1,3 +1,5 @@
+import { GOOGLE_CALENDAR_STRATEGY_SESSION } from "@/lib/constants";
+
 export default function Hero() {
   return (
     <header className="relative overflow-hidden pt-28 pb-32 px-6">
@@ -28,7 +30,12 @@ export default function Hero() {
         </p>
 
         <div className="mt-11 flex flex-col sm:flex-row gap-4 justify-center">
-          <a href="#book" className="btn-primary text-black font-semibold text-[15px] px-8 py-4 rounded-lg">
+          <a
+            href={GOOGLE_CALENDAR_STRATEGY_SESSION}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-primary text-black font-semibold text-[15px] px-8 py-4 rounded-lg"
+          >
             Book Strategy Session
           </a>
           <a href="#proof" className="btn-secondary text-white font-semibold text-[15px] px-8 py-4 rounded-lg">

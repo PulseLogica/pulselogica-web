@@ -1,3 +1,5 @@
+import { GOOGLE_CALENDAR_STRATEGY_SESSION } from "@/lib/constants";
+
 export default function CTAFooter() {
   return (
     <>
@@ -9,15 +11,16 @@ export default function CTAFooter() {
               not a job you can&rsquo;t leave.
             </span>
           </h2>
-          <p className="mt-6 text-slate-400 text-lg">
-            Select a time below to map your AI transition roadmap. No sales
-            pitches. Just clear logic.
-          </p>
 
-          <div className="mt-14 rounded-2xl border border-white/10 bg-white/[.02] p-2">
-            <div className="rounded-xl bg-black/30 border border-white/5 h-[480px] flex items-center justify-center text-slate-500 text-sm">
-              [ Calendly embed goes here — replace with your scheduling link ]
-            </div>
+          <div className="mt-14 flex flex-col items-center gap-4">
+            <a
+              href={GOOGLE_CALENDAR_STRATEGY_SESSION}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-primary text-black font-semibold text-[15px] px-10 py-2 rounded-lg"
+            >
+              Book Now
+            </a>
           </div>
         </div>
       </section>
@@ -25,7 +28,9 @@ export default function CTAFooter() {
       <footer className="border-t border-white/10 py-10 px-6 pb-24 md:pb-10">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500">
           <span>PulseLogica</span>
-          <span>kevin@pulselogica.com</span>
+          <a href="mailto:kevin@pulselogica.com" className="hover:text-white transition">
+            kevin@pulselogica.com
+          </a>
         </div>
       </footer>
     </>
