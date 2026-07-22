@@ -1,53 +1,47 @@
+import { GOOGLE_CALENDAR_STRATEGY_SESSION } from "@/lib/constants";
+
 export default function Hero() {
   return (
-    <header className="bg-ink relative overflow-hidden">
-      <div className="max-w-6xl mx-auto px-6 pt-24 pb-28">
-        <div className="font-mono text-xs uppercase tracking-widest text-logic mb-6">
-          Systems for Philippine SMEs
+    <header className="relative overflow-hidden pt-28 pb-32 px-6">
+      <div className="grid-overlay absolute inset-0"></div>
+
+      <div className="relative max-w-3xl mx-auto text-center">
+        <span className="annot inline-block mb-8 px-4 py-1.5 rounded-full border border-white/10 bg-white/[.03]">
+          AI Operational Strategy
+        </span>
+
+        <div className="relative flex justify-center my-14">
+          <div className="glow-cube"></div>
+          <div className="pulse-line w-40" style={{ top: 60, left: "calc(50% - 220px)" }}></div>
+          <div className="pulse-line w-40" style={{ top: 60, right: "calc(50% - 220px)" }}></div>
+          <div className="pulse-line w-24" style={{ top: 30, left: "calc(50% - 140px)", opacity: 0.3 }}></div>
+          <div className="pulse-line w-24" style={{ top: 90, right: "calc(50% - 140px)", opacity: 0.3 }}></div>
         </div>
-        <h1 className="font-mono font-bold text-4xl md:text-6xl leading-tight text-paper max-w-3xl">
-          Your business runs <span className="text-pulse">without you</span> —{" "}
-          <em className="not-italic text-paper/60">on purpose.</em>
+
+        <h1 className="text-5xl md:text-7xl font-light tracking-tight leading-[1.05]">
+          Where your{" "}
+          <span className="font-serif italic" style={{ color: "#FF7A00" }}>
+            pulse
+          </span>{" "}
+          becomes logic.
         </h1>
-        <p className="font-serif text-lg text-paper/70 max-w-xl mt-8 leading-relaxed">
-          We convert owner-dependent, undocumented operations into documented,
-          AI-enabled systems. You stay the decision-maker — we build the
-          infrastructure that lets the business run without you physically
-          present.
+        <p className="mt-7 text-lg text-slate-400 max-w-xl mx-auto leading-relaxed">
+          AI consulting for SMEs. We build it. We integrate it. You run the company.
         </p>
 
-        <div className="flex flex-wrap gap-4 mt-10">
+        <div className="mt-11 flex flex-col sm:flex-row gap-4 justify-center">
           <a
-            href="#cta"
-            className="font-mono text-sm uppercase tracking-wide bg-pulse text-paper px-6 py-3 rounded-md hover:bg-pulse/90 transition-colors"
+            href={GOOGLE_CALENDAR_STRATEGY_SESSION}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-primary text-black font-semibold text-[15px] px-8 py-4 rounded-lg"
           >
-            Book a Free Ops Assessment
+            Book Strategy Session
           </a>
-          <a
-            href="#services"
-            className="font-mono text-sm uppercase tracking-wide border border-paper/30 text-paper px-6 py-3 rounded-md hover:border-paper/60 transition-colors"
-          >
-            See What We Do
+          <a href="#proof" className="btn-secondary text-white font-semibold text-[15px] px-8 py-4 rounded-lg">
+            View examples
           </a>
         </div>
-
-        {/* Signature: heartbeat line straightening into a circuit trace */}
-        <svg
-          className="mt-16 w-full max-w-2xl"
-          viewBox="0 0 700 60"
-          fill="none"
-          aria-hidden="true"
-        >
-          <path
-            d="M0 30 L40 30 L52 8 L68 52 L84 30 L120 30
-               L280 30 L292 8 L308 52 L324 30 L360 30
-               L400 30 L400 14 L440 14 L440 46 L480 46 L480 30 L700 30"
-            stroke="#E8785A"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
       </div>
     </header>
   );

@@ -1,21 +1,27 @@
+import Image from "next/image";
+import Link from "next/link";
+import { GOOGLE_CALENDAR_STRATEGY_SESSION } from "@/lib/constants";
+
 export default function Nav() {
   return (
-    <nav className="sticky top-0 z-50 bg-paper/90 backdrop-blur border-b border-line">
-      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        <div className="font-mono font-bold text-sm tracking-tight text-ink">
-          PULSE<span className="text-pulse">·</span>LOGICA
-        </div>
-        <div className="hidden md:flex items-center gap-8 font-mono text-xs uppercase tracking-wide text-ink/70">
-          <a href="#services" className="hover:text-ink transition-colors">Services</a>
-          <a href="#process" className="hover:text-ink transition-colors">Process</a>
-          <a href="#cases" className="hover:text-ink transition-colors">Case Studies</a>
-          <a href="#values" className="hover:text-ink transition-colors">Values</a>
+    <nav className="sticky top-0 z-50 backdrop-blur-xl bg-black/40 border-b border-white/10">
+      <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+        <Link href="/" aria-label="PulseLogica home" className="flex items-center gap-2">
+          <Image src="/assets/logo.png" alt="PulseLogica" width={120} height={32} className="h-8 w-auto" />
+        </Link>
+        <div className="hidden md:flex gap-8 text-sm text-slate-400">
+          <a href="#phases" className="hover:text-white transition">How it works</a>
+          <a href="#cases" className="hover:text-white transition">Case Studies</a>
+          <a href="#proof" className="hover:text-white transition">Proof</a>
+          <a href="#book" className="hover:text-white transition">Book a call</a>
         </div>
         <a
-          href="#cta"
-          className="font-mono text-xs uppercase tracking-wide bg-ink text-paper px-4 py-2 rounded-md hover:bg-ink/90 transition-colors"
+          href={GOOGLE_CALENDAR_STRATEGY_SESSION}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn-primary text-black font-semibold text-sm px-5 py-2.5 rounded-lg"
         >
-          Book a Call
+          Book Strategy Session
         </a>
       </div>
     </nav>

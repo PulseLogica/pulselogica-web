@@ -2,18 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --font-jetbrains: 'JetBrains Mono', monospace;
-  --font-source-serif: 'Source Serif 4', serif;
-}
-
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  background-color: #FAF7F2;
-  color: #16192B;
+  background: radial-gradient(120% 90% at 50% -10%, #0A0F1D, #020408 60%);
+  color: #fff;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -33,4 +28,63 @@ body {
 .reveal.in {
   opacity: 1;
   transform: translateY(0);
+}
+
+@layer components {
+  .grid-overlay {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-size: 64px 64px;
+    -webkit-mask-image: radial-gradient(70% 60% at 50% 30%, black, transparent 75%);
+    mask-image: radial-gradient(70% 60% at 50% 30%, black, transparent 75%);
+  }
+
+  .glow-cube {
+    width: 120px;
+    height: 120px;
+    border-radius: 22px;
+    background: linear-gradient(145deg, #FF7A00, #B84E00);
+    box-shadow: 0 0 60px 10px rgba(255, 122, 0, 0.45), 0 0 140px 40px rgba(255, 122, 0, 0.18);
+    transform: rotate(45deg);
+  }
+
+  .pulse-line {
+    position: absolute;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #FF7A00, transparent);
+    opacity: 0.5;
+  }
+
+  .btn-primary {
+    background: linear-gradient(145deg, #FF8C1A, #FF7A00);
+    box-shadow: 0 8px 30px -6px rgba(255, 122, 0, 0.55);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 34px -6px rgba(255, 122, 0, 0.7);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    border: 1.5px solid rgba(255, 255, 255, 0.28);
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .btn-secondary:hover {
+    border-color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .annot {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #94A3B8;
+  }
+
+  .card-dark {
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.015));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
 }

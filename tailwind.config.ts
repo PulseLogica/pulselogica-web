@@ -5,16 +5,17 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: "#16192B",
-        paper: "#FAF7F2",
-        pulse: "#E8785A",
-        logic: "#4FB6A8",
-        muted: "#7A7568",
-        line: "#E4DDD0",
+        "bg-deep": "#020408",
+        "bg-mid": "#0A0F1D",
+        amber: "#FF7A00",
+        "amber-soft": "rgba(255,122,0,.15)",
+        cream: "#F8F9FA",
+        // brand guide restricts this to internal/dev UI — never on the public marketing site
+        "tech-cyan": "#00E5FF",
       },
       fontFamily: {
-        mono: ["var(--font-jetbrains)", "JetBrains Mono", "monospace"],
-        serif: ["var(--font-source-serif)", "Source Serif 4", "serif"],
+        sans: ["var(--font-inter)", "Inter", "system-ui", "sans-serif"],
+        serif: ["var(--font-instrument-serif)", "Georgia", "serif"],
       },
     },
   },
