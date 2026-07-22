@@ -26,64 +26,41 @@ export type CaseStudyDetail = {
 
 export const caseStudies: CaseStudyDetail[] = [
   {
-    slug: "cadcc",
-    client: "CAD Construction Corporation (CADCC)",
+    slug: "construction-company",
+    client: "Construction SME (Beachhead Tier 1 Client)",
     engagement: "Diagnostic + Implementation Sprint (Systemize)",
-    title: "Systemizing the Business Behind a Family Construction Company",
+    title: "What Happens When the Business Only Runs Through You",
     dek: "How PulseLogica documented, de-bottlenecked, and rebuilt the operating backbone of a founder-run construction company — before touching a single tool.",
     challengeHeading: "A Business That Only Ran Through One Person",
     challengeBody:
-      "CADCC operated the way most project-based construction SMEs in the Philippines do: quotes were priced from memory, crews were deployed based on who the owner personally trusted, and job handoffs lived in group chats instead of documents. A management layer had been introduced once before, but it didn't hold — there was no underlying process for a manager to actually run. When the owner was unavailable, output visibly dropped. PulseLogica was brought in to systemize the operation from the ground up, using CADCC as its own first proof of concept.",
-    findingsLabel: "What the Diagnostic Found",
+      "A family-founded construction company. Like most project-based SMEs in the Philippines, it grew the way most do — through the owner's judgment, relationships, and memory. Bids got priced because the owner knew what materials cost that week. Crews got deployed because the owner knew who was reliable. Job handoffs happened in group chats and hallway conversations, not documents. That model works. It also has a ceiling: the business can only move as fast, and as far, as the owner can personally show up.",
+    findingsLabel: "What the Diagnostic Surfaced",
     findings: [
-      "No documented flow from bid to project close-out",
-      "Job handoff knowledge held entirely by the owner and a handful of long-tenured staff",
-      "A previously attempted management layer that reverted back to owner-run",
-      'Bid pricing based on "what it usually costs," not current material and labor rates',
-      "No visibility into margin per job until after it closed",
+      "Quote-to-close-out was tribal knowledge — no single place a new hire, a subcontractor, or a bank could look to see how a job actually moved from bid to handover; it lived in people's heads and scattered chat threads",
+      "A management layer had been tried before and quietly reverted — responsibility drifted back to the owner because the systems underneath the layer weren't there to support it; the manager had authority but no documented process to run",
+      "Output visibly dropped whenever a key person was out — not because the team wasn't capable, but because nothing was written down for them to run without a work-around",
     ],
-    approachHeading: "Two Phases, One System",
+    approachHeading: "What Changed",
     phases: [
       {
-        label: "Phase 1: Diagnose + Document",
-        body: "Run the full operational diagnostic against CADCC using the same five-pillar instrument used with every client. Map the real quote-to-close-out flow as it happens, not as assumed. Identify a named champion for every process step — hard stop if no champion can be named.",
+        label: "Documenting the operation before touching any tooling",
+        body: "Mapping the real quote → execution → close-out flow as it actually happened, not as anyone assumed it happened. Identifying the champion for each process step — the person who could own it going forward, not just execute it once. Converting recurring judgment calls (bid pricing, crew sourcing, compliance sign-off) into documented, repeatable steps.",
       },
       {
-        label: "Phase 2: Systemize + Sequence Tooling",
-        body: "Convert every recurring judgment call into a documented, repeatable procedure. Only once the process is proven on paper, layer in tooling to remove friction — never the reverse.",
+        label: "Only after that: layering in tools",
+        body: "Tools were introduced to make the documented process faster — not the other way around.",
       },
     ],
     milestones: [
-      "Bid pricing procedure rebuilt against current material/labor rates",
-      "Job handoff documentation replacing group-chat knowledge transfer",
-      "Margin-per-job visibility built into close-out step",
-      "Phase 2 tooling roadmap scoped",
+      "Real quote-to-close-out flow mapped and documented",
+      "Named champion identified for each process step",
+      "Recurring judgment calls converted into documented, repeatable procedures",
+      "Tooling layered in only after the process was proven on paper",
     ],
-    stackHeading: "The Operating Stack",
+    stackHeading: "The Result",
     stackIntro:
-      "PulseLogica designed and sequenced the systems layer behind CADCC's operations: documented process, compliance tracking, and — where warranted — automation. Process first, tooling second, so nothing gets built on top of an undocumented workflow.",
-    stack: [
-      {
-        name: "Bid Vault & Extraction Engine",
-        description:
-          "Centralizes bid documentation and material/labor rate data so pricing reflects current costs, not memory.",
-      },
-      {
-        name: "Automated Sourcing Directory",
-        description:
-          'A structured, searchable record of crew and subcontractor sourcing — replacing "who does the owner know" with a documented directory.',
-      },
-      {
-        name: "Multi-Agency Compliance Shield",
-        description:
-          "Tracks compliance obligations across the agencies a construction SME has to answer to, so nothing depends on one person remembering a renewal date.",
-      },
-      {
-        name: "Core Administrative Tune-Up",
-        description:
-          "Cleans up the underlying administrative workflow — the unglamorous back-office work that determines whether the rest of the system holds.",
-      },
-    ],
+      "The company now runs day-to-day operations without the owner physically present for each decision. The business didn't get an app first — it got a set of processes a person other than the founder could run with confidence. That's the foundation everything else, including any future technology, sits on.",
+    stack: [],
     beforeAfterHeading: "From Chaos to Continuity",
     beforeAfter: [
       { label: "Job handoff method", before: "Verbal / group chat", after: "Written procedure" },
@@ -91,71 +68,47 @@ export const caseStudies: CaseStudyDetail[] = [
     ],
     ctaHeading: "Your operation shouldn't run only through you.",
     ctaBody:
-      "PulseLogica documents and systemizes founder-dependent operations before layering on any tooling — so the business runs whether or not you're in the room.",
+      "If a normal week at your company falls apart the moment you're unreachable, that's not a staffing problem. It's a documentation problem wearing a staffing costume. The fix isn't hiring more people who will run into the same wall — it's making the business legible enough that competent people can actually run it.",
   },
   {
-    slug: "featherweight-chicken",
-    client: "Featherweight Chicken (FWT)",
+    slug: "food-brand",
+    client: "QSR Brand (Early-Stage Launch)",
     engagement: "Systems Design + Implementation (Centralize-First)",
-    title: "Building One System Before Opening a Second Store",
-    dek: "How PulseLogica centralized Featherweight Chicken's operating stack before multi-location growth began — avoiding the drift most QSR brands only notice after it's expensive to fix.",
+    title: "The Cost of Running Every Store the Same Way, On Purpose",
+    dek: "How PulseLogica centralized a QSR brand's operating stack before multi-location growth began — avoiding the drift most brands only notice after it's expensive to fix.",
     challengeHeading: "Growth That Usually Forks Without Anyone Deciding To",
     challengeBody:
-      "Most QSR brands scale store by store, and each new location ends up running things a little differently — even when it starts out copying the first. Nobody decides to fragment operations; it just happens by default once growth outpaces documentation. FWT wanted its second, third, and future stores to run on the exact same system as the first, from day one — not a \"close enough\" copy of it.",
-    findingsLabel: "What Was at Stake Before Launch",
+      "This brand is in active launch phase. This isn't a \"we 3x'd margin\" story — those numbers aren't there yet, and pretending otherwise wouldn't hold up. This is a cost-avoidance story: what centralizing operations early prevented, before the cracks that usually show up at store 3, 4, or 5 had a chance to form. Most QSR brands scale by trial and error — a first store figures out its own way of doing things, a second store copies most of it but not all, and by the third store, \"how we do things\" has quietly forked into two or three versions. Nobody planned that. It just happens when systems aren't centralized before growth starts.",
+    findingsLabel: "What We Did Differently",
     findings: [
-      "No shared point-of-sale or staff system across future locations",
-      "No centralized inventory or sales reporting structure",
-      "No standard manager onboarding — every store would train its own way",
-      "No per-store margin visibility built in from the start",
+      "Before this brand opened beyond its first location, the operating stack — point of sale, staff management, inventory logic — was built centrally, once, and designed to be the same system every store runs on",
+      "That's a deliberate, systemized-before-execution choice, not an accident of sequencing",
     ],
-    approachHeading: "Centralize First, Then Scale",
+    approachHeading: "What This Avoided (The Cost-Avoidance Case)",
     phases: [
       {
-        label: "Phase 1: Build the Shared System",
-        body: "Design and deploy one operating stack — POS, staff app, inventory logic — before a second store opens. Every store built to run on the same system, not a \"similar\" one.",
+        label: "Because the systems were centralized from the start",
+        body: "The brand sidesteps costs that typically show up later and are expensive to unwind: no parallel \"how store 2 does it\" vs. \"how store 1 does it\" reconciliation project down the line; no retraining cost when a manager moves between locations, since the system is identical, not \"similar\"; no duplicate tooling spend from stores independently picking their own point solutions; no blind spot on margin per location, because the reporting structure was built in from day one, not bolted on after someone asked \"wait, which store is actually profitable?\"",
       },
       {
-        label: "Phase 2: Standardize the Rollout",
-        body: "Build manager onboarding and store-opening procedures around the single system, so every new location launches on identical infrastructure instead of reinventing its own version.",
+        label: "Why none of this shows up as a line item",
+        body: "None of this shows up as a number on a P&L labeled \"savings.\" It shows up as problems that simply never had to get solved, because they were designed out before they could exist.",
       },
     ],
     milestones: [
-      "FWT POS deployed as the single point-of-sale system",
-      "FWTeam App deployed for staff management across locations",
-      "Centralized inventory and reporting logic built pre-launch",
-      "Standard store-opening and manager onboarding procedure documented",
-      "Per-location margin visibility built into reporting from day one",
+      "One shared operating stack — POS, staff management, inventory logic — built before a second store opened",
+      "No store-to-store reconciliation project needed",
+      "No retraining cost when managers move between locations",
+      "Per-location margin visibility built in from day one",
     ],
-    stackHeading: "The Tech Stack",
+    stackHeading: "Why This Matters to You",
     stackIntro:
-      "PulseLogica designed and deployed FWT's full operating infrastructure — point of sale, staff management, inventory, and reporting — as one connected system rather than a patchwork of per-store tools.",
-    stack: [
-      {
-        name: "FWT POS",
-        description:
-          "The single point-of-sale system every store runs on, feeding the same reporting structure regardless of location.",
-      },
-      {
-        name: "FWTeam App",
-        description:
-          "Staff management and scheduling built once, deployed identically at every store — no per-location retraining when staff transfer.",
-      },
-      {
-        name: "Centralized Inventory Logic",
-        description:
-          "Inventory tracked against one shared structure, not reconciled after the fact across stores.",
-      },
-      {
-        name: "Per-Store Reporting",
-        description:
-          "Margin and performance visible by location from the first day of operation, not bolted on after someone asks which store is actually profitable.",
-      },
-    ],
+      "If you're pre-scale, the cheapest time to fix operational fragmentation is before it exists. The expensive version of this story is the one where a founder discovers at store 5 that every location is quietly running its own version of the business — and now has to unwind years of drift instead of avoiding it.",
+    stack: [],
     beforeAfterHeading: "From First Store to System",
     beforeAfter: [
-      { label: "Point of sale", before: "Not yet centralized", after: "One shared FWT POS" },
-      { label: "Staff onboarding", before: "Per-store", after: "One system via FWTeam App" },
+      { label: "Point of sale", before: "Not yet centralized", after: "One shared system across stores" },
+      { label: "Staff onboarding", before: "Per-store", after: "One standard system" },
       { label: "Margin visibility", before: "Not built in", after: "Per-store, from launch" },
       { label: "Store-opening process", before: "Undefined", after: "Documented, repeatable" },
     ],

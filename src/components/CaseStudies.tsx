@@ -13,45 +13,45 @@ type CaseStudy = {
 
 const cases: CaseStudy[] = [
   {
-    slug: "cadcc",
-    title: "CADCC Operational Continuity System",
+    slug: "construction-company",
+    title: "Operational Continuity System — Construction SME",
     challenge:
-      "CAD Construction Corporation ran the way most project-based SMEs do — through the owner's memory, relationships, and hands-on presence. Job handoffs lived in group chats, not documents. A management layer had been tried once and quietly reverted, and output visibly dropped whenever the owner was unavailable.",
+      "A family construction business ran the way a lot of them do — almost everything passed through the owner's head. Bids, crew assignments, job handoffs: mostly tribal knowledge and group chats, nothing written down. A manager was brought in once to help, but it didn't stick because there was no clear process to hand over. When the owner wasn't around, work slowed down.",
     solutionIntro:
-      "PulseLogica ran a full operational diagnostic and systemized CADCC's core workflow before introducing any tooling:",
+      "PulseLogica documented how the business actually operates, before bringing in any new tools:",
     solution: [
-      "Quote-to-close-out process mapping",
-      "Champion identification for each operational step",
-      "Documentation of previously undocumented judgment calls (bid pricing, crew sourcing, compliance sign-off)",
-      "Sequenced tooling layered on only after the process was proven on paper",
+      "Mapped the real process from bid to project close-out",
+      "Identified who should own each step — not just do it, but be accountable for it",
+      "Wrote down decisions that used to live only in the owner's head (bid pricing, crew selection, compliance sign-off)",
+      "Only added tools once the process itself was proven on paper",
     ],
     infrastructure: [
-      "Documented quote → execution → close-out workflow",
-      "Named process owners independent of the founder",
-      "Repeatable, written procedures for previously tribal-knowledge decisions",
+      "A written process from quote to turnover",
+      "Clear owners for each step, not just the founder",
+      "Answers on paper for decisions that used to mean \"ask the boss\"",
     ],
     impact:
-      "CADCC now runs day-to-day operations without the owner physically present for every decision — the business became legible enough for someone other than the founder to run it.",
+      "The business can now run day-to-day even when the owner isn't on-site. The team no longer has to wait on one person to keep moving.",
   },
   {
-    slug: "featherweight-chicken",
-    title: "Featherweight Chicken Centralized Operations Rollout",
+    slug: "food-brand",
+    title: "Centralized Operations Rollout — QSR Brand",
     challenge:
-      'Most QSR brands scale by trial and error — each new store copies most, but not all, of how the first one operates, and "how we do things" quietly forks with every location added. FWT needed to avoid that drift before it opened beyond its first store.',
+      "Most food brands grow store by store, and each new branch ends up doing things a little differently — even if it started out copying the first one. Before long, no two stores run exactly the same way. This brand wanted to avoid that from the very beginning, before opening a second location.",
     solutionIntro:
-      "PulseLogica centralized FWT's operating stack once, before multi-location growth began:",
+      "PulseLogica set up one shared operating system before the brand started expanding:",
     solution: [
-      "Unified POS and team app deployed as the single system of record",
-      "Inventory and reporting logic built centrally, not per-store",
-      "Manager onboarding designed around one standard system, not location-specific variants",
+      "One point-of-sale and one staff app used across every store, not a different setup per branch",
+      "Inventory and sales reporting built centrally, so every store feeds the same system",
+      "New store managers trained on one standard setup, not their own version of it",
     ],
     infrastructure: [
-      "Centralized POS and team management system (FWT POS, FWTeam App)",
-      "Standardized store-to-store operating procedures",
-      "Built-in per-location margin visibility from day one",
+      "One shared point-of-sale and staff management system across all locations",
+      "The same operating steps at every store",
+      "Per-store profit visibility built in from day one, not added later",
     ],
     impact:
-      "FWT avoids the reconciliation, retraining, and duplicate-tooling costs that typically surface once a growing brand discovers its stores have quietly diverged — because the system was designed the same everywhere from the start.",
+      "The brand avoids the headaches that usually show up later — retraining staff who transfer between branches, untangling stores that quietly grew apart, paying for different tools at each location — because every store was built to run the same way from the start.",
   },
 ];
 
