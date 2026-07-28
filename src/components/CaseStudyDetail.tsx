@@ -15,7 +15,7 @@ export default function CaseStudyDetail({ data }: { data: CaseStudyDetailData })
             ← Back to case studies
           </Link>
 
-          <span className="annot block mb-4" style={{ color: "#FF7A00" }}>
+          <span className="annot block mb-4" style={{ color: "var(--color-amber)" }}>
             Case Study
           </span>
           <h1 className="text-4xl md:text-6xl font-light tracking-tight leading-[1.1]">
@@ -47,7 +47,7 @@ export default function CaseStudyDetail({ data }: { data: CaseStudyDetailData })
           <p className="mt-6 text-slate-400 leading-relaxed">{data.challengeBody}</p>
 
           <div className="mt-10 card-dark rounded-2xl p-8">
-            <div className="annot mb-4" style={{ color: "#FF7A00" }}>
+            <div className="annot mb-4" style={{ color: "var(--color-amber)" }}>
               {data.findingsLabel}
             </div>
             <BulletList items={data.findings} />
@@ -65,7 +65,7 @@ export default function CaseStudyDetail({ data }: { data: CaseStudyDetailData })
           <div className="mt-10 space-y-8">
             {data.phases.map((phase) => (
               <div key={phase.label}>
-                <div className="annot mb-3" style={{ color: "#FF7A00" }}>
+                <div className="annot mb-3" style={{ color: "var(--color-amber)" }}>
                   {phase.label}
                 </div>
                 <p className="text-slate-400 leading-relaxed">{phase.body}</p>
@@ -74,7 +74,7 @@ export default function CaseStudyDetail({ data }: { data: CaseStudyDetailData })
           </div>
 
           <div className="mt-10 card-dark rounded-2xl p-8">
-            <div className="annot mb-4" style={{ color: "#FF7A00" }}>
+            <div className="annot mb-4" style={{ color: "var(--color-amber)" }}>
               Key Milestones Delivered
             </div>
             <BulletList items={data.milestones} />
@@ -110,7 +110,7 @@ export default function CaseStudyDetail({ data }: { data: CaseStudyDetailData })
                   <span className="text-slate-400">
                     {row.before}
                     <span className="mx-2 text-slate-600">→</span>
-                    <span style={{ color: "#FF7A00" }}>{row.after}</span>
+                    <span style={{ color: "var(--color-amber)" }}>{row.after}</span>
                   </span>
                 </div>
                 {i < data.beforeAfter.length - 1 && (

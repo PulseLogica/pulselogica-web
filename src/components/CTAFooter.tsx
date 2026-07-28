@@ -8,7 +8,7 @@ export default function CTAFooter() {
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-light tracking-tight leading-tight">
             Build a company you can hand over —{" "}
-            <span className="font-serif italic" style={{ color: "#FF7A00" }}>
+            <span className="font-serif italic" style={{ color: "var(--color-amber)" }}>
               not a job you can&rsquo;t leave.
             </span>
           </h2>
