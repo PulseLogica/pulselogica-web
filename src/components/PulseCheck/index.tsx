@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { GOOGLE_CALENDAR_STRATEGY_SESSION } from "@/lib/constants";
 import { QUESTIONS, TRACK_COPY, type SliderQuestion, type Track } from "./constants";
+import type { ContactFormValues } from "./schema";
+import Stepper from "./Stepper";
+import ContactForm from "./ContactForm";
 
 function buildPulsePath(progressFraction: number, segCount: number) {
   const totalW = 500;
@@ -42,14 +45,20 @@ function scoreSlider(unit: string, rawVal: number) {
   return 0;
 }
 
+function scoreFor(question: (typeof QUESTIONS)[number], raw: number) {
+  return question.type === "choice" ? raw : scoreSlider(question.unit, raw);
+}
+
 function SliderQuestionBlock({
   question,
+  initialValue,
   onConfirm,
 }: {
   question: SliderQuestion;
-  onConfirm: (score: number) => void;
+  initialValue?: number;
+  onConfirm: (raw: number) => void;
 }) {
-  const startVal = Math.round((question.min + question.max) / 2);
+  const startVal = initialValue ?? Math.round((question.min + question.max) / 2);
   const [val, setVal] = useState(startVal);
 
   return (
@@ -72,7 +81,7 @@ function SliderQuestionBlock({
         <span>{question.maxLabel}</span>
       </div>
       <button
-        onClick={() => onConfirm(scoreSlider(question.unit, val))}
+        onClick={() => onConfirm(val)}
         className="btn-primary block w-full text-black font-bold text-[15px] py-3.5 rounded-lg"
       >
         Continue
@@ -81,40 +90,84 @@ function SliderQuestionBlock({
   );
 }
 
+type Stage = "quiz" | "form" | "reveal";
+
 export default function PulseCheck() {
   const [current, setCurrent] = useState(0);
-  const [answers, setAnswers] = useState<number[]>([]);
-  const [revealed, setRevealed] = useState(false);
+  const [rawAnswers, setRawAnswers] = useState<(number | undefined)[]>(
+    Array(QUESTIONS.length).fill(undefined)
+  );
+  const [stage, setStage] = useState<Stage>("quiz");
 
   const question = QUESTIONS[current];
+  const firstUnanswered = rawAnswers.findIndex((a) => a === undefined);
+  const answeredSoFar = firstUnanswered === -1 ? QUESTIONS.length : firstUnanswered;
   const progress = buildPulsePath(current / QUESTIONS.length, QUESTIONS.length);
 
-  function selectAnswer(score: number) {
-    const next = [...answers, score];
-    setAnswers(next);
-    if (current + 1 < QUESTIONS.length) {
-      setCurrent(current + 1);
+  function recordAnswer(index: number, raw: number) {
+    const next = [...rawAnswers];
+    next[index] = raw;
+    setRawAnswers(next);
+
+    if (index + 1 < QUESTIONS.length) {
+      setCurrent(index + 1);
     } else {
-      setTimeout(() => setRevealed(true), 350);
+      setTimeout(() => setStage("form"), 350);
     }
   }
 
+  function goToStep(index: number) {
+    setCurrent(index);
+  }
+
+  const scores = rawAnswers.map((raw, i) => (raw === undefined ? undefined : scoreFor(QUESTIONS[i], raw)));
+  const dependencyScores = scores.slice(0, 4).filter((s): s is number => s !== undefined);
+  const urgencyScores = scores.slice(4, 8).filter((s): s is number => s !== undefined);
+  const depAvg = dependencyScores.reduce((a, b) => a + b, 0) / (dependencyScores.length || 1);
+  const urgAvg = urgencyScores.reduce((a, b) => a + b, 0) / (urgencyScores.length || 1);
+  const overall = (depAvg + urgAvg) / 2;
+  const hotLead = depAvg <= 1 && urgAvg <= 1;
+
   let track: Track = "Systemize";
-  let hotLead = false;
-  if (revealed) {
-    const dependencyScores = answers.slice(0, 4);
-    const urgencyScores = answers.slice(4, 8);
-    const depAvg = dependencyScores.reduce((a, b) => a + b, 0) / dependencyScores.length;
-    const urgAvg = urgencyScores.reduce((a, b) => a + b, 0) / urgencyScores.length;
-    const overall = (depAvg + urgAvg) / 2;
-    hotLead = depAvg <= 1 && urgAvg <= 1;
+  if (overall < 1.25) track = "Systemize";
+  else if (overall < 2.25) track = "Augment";
+  else track = "Scale";
 
-    if (overall < 1.25) track = "Systemize";
-    else if (overall < 2.25) track = "Augment";
-    else track = "Scale";
+  async function handleContactSubmit(contact: ContactFormValues) {
+    const payload = {
+      contact,
+      answers: QUESTIONS.map((q, i) => {
+        const raw = rawAnswers[i];
+        const answerLabel =
+          raw === undefined
+            ? undefined
+            : q.type === "choice"
+            ? q.options[raw]
+            : `${raw}${raw === q.max ? "+" : ""} ${q.unit}`;
+        return {
+          eyebrow: q.eyebrow,
+          question: q.text,
+          answer: answerLabel,
+          score: raw === undefined ? undefined : scoreFor(q, raw),
+        };
+      }),
+      depAvg,
+      urgAvg,
+      overall,
+      track,
+      hotLead,
+    };
 
-    // eslint-disable-next-line no-console
-    console.log("Pulse Check result (internal):", { depAvg, urgAvg, hotLead });
+    try {
+      await fetch("/api/pulse-check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+    } catch (err) {
+      console.error("Pulse Check sync failed:", err);
+    }
+    setStage("reveal");
   }
 
   return (
@@ -133,9 +186,9 @@ export default function PulseCheck() {
       </div>
 
       <div className="card-dark w-full max-w-[560px] rounded-[18px] px-9 pt-10 pb-8 relative">
-        {!revealed ? (
+        {stage === "quiz" && (
           <>
-            <div className="w-full h-[54px] mb-7 relative">
+            <div className="w-full h-[54px] mb-2 relative">
               <span className="absolute -top-[22px] right-0 text-[11px] tracking-[0.08em] text-slate-400 uppercase">
                 Question {current + 1} of {QUESTIONS.length}
               </span>
@@ -156,6 +209,13 @@ export default function PulseCheck() {
               </svg>
             </div>
 
+            <Stepper
+              count={QUESTIONS.length}
+              current={current}
+              answeredCount={answeredSoFar}
+              onStepClick={goToStep}
+            />
+
             <div className="annot mb-3.5" style={{ color: "var(--color-amber)" }}>
               {question.eyebrow}
             </div>
@@ -171,21 +231,38 @@ export default function PulseCheck() {
 
             {question.type === "choice" ? (
               <div className="flex flex-col gap-2.5">
-                {question.options.map((opt, idx) => (
-                  <button
-                    key={opt}
-                    onClick={() => selectAnswer(idx)}
-                    className="text-left bg-white/[0.02] border border-white/10 hover:border-amber hover:bg-amber-soft text-cream font-medium text-[15px] px-[18px] py-[15px] rounded-[10px] transition active:scale-[0.99]"
-                  >
-                    {opt}
-                  </button>
-                ))}
+                {question.options.map((opt, idx) => {
+                  const isSelected = rawAnswers[current] === idx;
+                  return (
+                    <button
+                      key={opt}
+                      onClick={() => recordAnswer(current, idx)}
+                      className="text-left font-medium text-[15px] px-[18px] py-[15px] rounded-[10px] transition active:scale-[0.99] border"
+                      style={
+                        isSelected
+                          ? { borderColor: "var(--color-amber)", background: "rgba(255,122,0,.15)", color: "var(--color-white)" }
+                          : { borderColor: "rgba(148,163,184,0.16)", background: "rgba(255,255,255,0.02)", color: "var(--color-white)" }
+                      }
+                    >
+                      {opt}
+                    </button>
+                  );
+                })}
               </div>
             ) : (
-              <SliderQuestionBlock question={question} onConfirm={selectAnswer} />
+              <SliderQuestionBlock
+                key={current}
+                question={question}
+                initialValue={rawAnswers[current]}
+                onConfirm={(raw) => recordAnswer(current, raw)}
+              />
             )}
           </>
-        ) : (
+        )}
+
+        {stage === "form" && <ContactForm onSubmit={handleContactSubmit} />}
+
+        {stage === "reveal" && (
           <div className="text-center">
             <div className="text-[11px] tracking-[0.12em] uppercase text-slate-400 mb-2.5">
               Your Pulse Check Result
