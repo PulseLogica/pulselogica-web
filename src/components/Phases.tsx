@@ -12,7 +12,7 @@ export default function Phases() {
         {/* Phase 1: text left / visual right */}
         <div className="grid md:grid-cols-2 gap-14 items-center mb-32">
           <div>
-            <div className="annot mb-4" style={{ color: "#FF7A00" }}>
+            <div className="annot mb-4" style={{ color: "var(--color-amber)" }}>
               Phase 1 — Dependency mapping
             </div>
             <h3 className="text-3xl font-semibold leading-tight">
@@ -26,13 +26,13 @@ export default function Phases() {
             </p>
             <div
               className="mt-6 inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-full"
-              style={{ background: "rgba(255,122,0,.15)", color: "#FF7A00" }}
+              style={{ background: "rgba(255,122,0,.15)", color: "var(--color-amber)" }}
             >
               60-minute diagnostic call
             </div>
           </div>
           <div className="card-dark rounded-2xl p-8">
-            <div className="annot mb-6" style={{ color: "#94A3B8" }}>
+            <div className="annot mb-6" style={{ color: "var(--color-slate)" }}>
               Operational flow
             </div>
             <div className="space-y-3">
@@ -44,8 +44,8 @@ export default function Phases() {
                 <span className="w-2 h-2 rounded-full bg-white/20"></span>
                 Execution → group chat
               </div>
-              <div className="flex items-center gap-3 text-sm" style={{ color: "#FF7A00" }}>
-                <span className="w-2 h-2 rounded-full" style={{ background: "#FF7A00" }}></span>
+              <div className="flex items-center gap-3 text-sm" style={{ color: "var(--color-amber)" }}>
+                <span className="w-2 h-2 rounded-full" style={{ background: "var(--color-amber)" }}></span>
                 Close-out → depends on memory
               </div>
               <div className="h-px bg-white/10 my-4"></div>
@@ -60,7 +60,7 @@ export default function Phases() {
         {/* Phase 2: visual left / text right */}
         <div className="grid md:grid-cols-2 gap-14 items-center mb-32">
           <div className="card-dark rounded-2xl p-8 md:order-1 order-2">
-            <div className="annot mb-6" style={{ color: "#94A3B8" }}>
+            <div className="annot mb-6" style={{ color: "var(--color-slate)" }}>
               Before / after
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -69,7 +69,7 @@ export default function Phases() {
                 <div className="text-xs text-slate-500 mt-1">Typical documentation timeline</div>
               </div>
               <div>
-                <div className="text-3xl font-light" style={{ color: "#FF7A00" }}>2–3 wks</div>
+                <div className="text-3xl font-light" style={{ color: "var(--color-amber)" }}>2–3 wks</div>
                 <div className="text-xs text-slate-400 mt-1">With AI-assisted capture</div>
               </div>
             </div>
@@ -77,7 +77,7 @@ export default function Phases() {
             <div className="text-sm text-slate-400">No new engineering headcount required</div>
           </div>
           <div className="md:order-2 order-1">
-            <div className="annot mb-4" style={{ color: "#FF7A00" }}>
+            <div className="annot mb-4" style={{ color: "var(--color-amber)" }}>
               Phase 2 — System integration
             </div>
             <h3 className="text-3xl font-semibold leading-tight">
@@ -95,7 +95,7 @@ export default function Phases() {
         {/* Phase 3: text left / visual right */}
         <div className="grid md:grid-cols-2 gap-14 items-center">
           <div>
-            <div className="annot mb-4" style={{ color: "#FF7A00" }}>
+            <div className="annot mb-4" style={{ color: "var(--color-amber)" }}>
               Phase 3 — The hand-off
             </div>
             <h3 className="text-3xl font-semibold leading-tight">
@@ -107,7 +107,7 @@ export default function Phases() {
             </p>
           </div>
           <div className="card-dark rounded-2xl p-8">
-            <div className="annot mb-6" style={{ color: "#94A3B8" }}>
+            <div className="annot mb-6" style={{ color: "var(--color-slate)" }}>
               What your team sees
             </div>
             <div className="space-y-4">
@@ -117,7 +117,7 @@ export default function Phases() {
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-slate-400">Undocumented handoffs</span>
-                <span className="font-medium" style={{ color: "#FF7A00" }}>0</span>
+                <span className="font-medium" style={{ color: "var(--color-amber)" }}>0</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-slate-400">Owner approvals pending</span>

@@ -25,7 +25,7 @@ export default function BackToTop() {
         height="16"
         viewBox="0 0 24 24"
         fill="none"
-        stroke="#FF7A00"
+        style={{ stroke: "var(--color-amber)" }}
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
