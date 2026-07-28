@@ -133,7 +133,7 @@ export default function PulseCheck() {
   else if (overall < 2.25) track = "Augment";
   else track = "Scale";
 
-  function handleContactSubmit(contact: ContactFormValues) {
+  async function handleContactSubmit(contact: ContactFormValues) {
     const payload = {
       contact,
       answers: QUESTIONS.map((q, i) => {
@@ -158,8 +158,15 @@ export default function PulseCheck() {
       hotLead,
     };
 
-    // eslint-disable-next-line no-console
-    console.log("Pulse Check submission (internal):", payload);
+    try {
+      await fetch("/api/pulse-check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+    } catch (err) {
+      console.error("Pulse Check sync failed:", err);
+    }
     setStage("reveal");
   }
 

@@ -43,7 +43,7 @@ function Field({
 export default function ContactForm({
   onSubmit,
 }: {
-  onSubmit: (values: ContactFormValues) => void;
+  onSubmit: (values: ContactFormValues) => void | Promise<void>;
 }) {
   const formik = useFormik<ContactFormValues>({
     initialValues: CONTACT_INITIAL_VALUES,
@@ -76,7 +76,7 @@ export default function ContactForm({
         disabled={formik.isSubmitting}
         className="btn-primary block w-full text-black font-bold text-[15px] py-3.5 rounded-lg mt-7"
       >
-        See My Results
+        {formik.isSubmitting ? "Submitting…" : "See My Results"}
       </button>
     </form>
   );
