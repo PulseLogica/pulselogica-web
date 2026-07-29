@@ -22,7 +22,7 @@ const instrumentSerif = Instrument_Serif({
 export const metadata: Metadata = {
   title: "PulseLogica — Where your pulse becomes logic.",
   description:
-    "AI consulting for SMEs. We build it. We integrate it. You run the company.",
+    "Systems consulting for SMEs. We organize it. We simplify it. You run the company.",
   icons: {
     icon: "/assets/favicon.ico",
   },
