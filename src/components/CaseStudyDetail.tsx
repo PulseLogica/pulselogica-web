@@ -1,6 +1,6 @@
 import Link from "next/link";
 import BulletList from "@/components/ui/BulletList";
-import { GOOGLE_CALENDAR_STRATEGY_SESSION } from "@/lib/constants";
+import { BOOK_STRATEGY_SESSION_URL } from "@/lib/constants";
 import type { CaseStudyDetail as CaseStudyDetailData } from "@/data/case-studies";
 
 export default function CaseStudyDetail({ data }: { data: CaseStudyDetailData }) {
@@ -131,7 +131,7 @@ export default function CaseStudyDetail({ data }: { data: CaseStudyDetailData })
           <p className="mt-6 text-slate-400 leading-relaxed">{data.ctaBody}</p>
 
           <a
-            href={GOOGLE_CALENDAR_STRATEGY_SESSION}
+            href={BOOK_STRATEGY_SESSION_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-10 inline-block btn-primary text-black font-semibold text-[15px] px-10 py-4 rounded-lg"

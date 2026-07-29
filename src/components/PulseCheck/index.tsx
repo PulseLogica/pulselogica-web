@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { GOOGLE_CALENDAR_STRATEGY_SESSION } from "@/lib/constants";
 import { QUESTIONS, TRACK_COPY, type SliderQuestion, type Track } from "./constants";
 import type { ContactFormValues } from "./schema";
 import Stepper from "./Stepper";
 import ContactForm from "./ContactForm";
+
+const GOOGLE_CALENDAR_BOOKING_URL = "https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ1e7bkdhxVtmh7MR9weu_jre8sd68v6Qc0ec7kPDrc4qAwQrZBTbpHMoe1auLTyfMVBhEt3Aitz";
 
 function buildPulsePath(progressFraction: number, segCount: number) {
   const totalW = 500;
@@ -272,7 +273,7 @@ export default function PulseCheck() {
               {TRACK_COPY[track]}
             </p>
             <a
-              href={GOOGLE_CALENDAR_STRATEGY_SESSION}
+              href={GOOGLE_CALENDAR_BOOKING_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="btn-primary inline-block text-black font-bold text-[15px] px-8 py-[15px] rounded-[10px]"
