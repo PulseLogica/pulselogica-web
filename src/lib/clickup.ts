@@ -1,11 +1,16 @@
 import type { PulseCheckPayload } from "@/lib/pulse-check-types";
 
 const CLICKUP_API_BASE = "https://api.clickup.com/api/v2";
+const CLICKUP_API_V3_BASE = "https://api.clickup.com/api/v3";
 
 const CUSTOM_FIELD_IDS = {
   companyName: "e0f2cbd6-99d2-4c7d-86f9-4da4f3677a69",
   website: "7f7d8448-5394-462b-b220-5763cdcf6374",
 };
+
+const PIPELINE_WORKSPACE_ID = "90161693471";
+const PROSPECTS_DOC_ID = "2kz0wgrz-996";
+const PROSPECTS_PAGE_ID = "2kz0wgrz-476";
 
 const SOURCE_VALUE = "website diagnostic";
 
@@ -90,6 +95,59 @@ export async function createClickUpTask(payload: PulseCheckPayload) {
 
   if (!res.ok) {
     throw new Error(`ClickUp task creation failed with ${res.status}: ${await res.text()}`);
+  }
+
+  return res.json();
+}
+
+export async function createClickUpProspectSubpage(payload: PulseCheckPayload) {
+  const apiToken = process.env.CLICKUP_API_TOKEN;
+
+  if (!apiToken) {
+    throw new Error("CLICKUP_API_TOKEN is not configured");
+  }
+
+  const res = await fetch(
+    `${CLICKUP_API_V3_BASE}/workspaces/${PIPELINE_WORKSPACE_ID}/docs/${PROSPECTS_DOC_ID}/pages`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: apiToken,
+      },
+      body: JSON.stringify({
+        parent_page_id: PROSPECTS_PAGE_ID,
+        name: `${payload.contact.firstName} ${payload.contact.lastName}`,
+        content: buildTaskDescription(payload),
+      }),
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error(`ClickUp subpage creation failed with ${res.status}: ${await res.text()}`);
+  }
+
+  return res.json();
+}
+
+export async function updateClickUpTask({ taskId, status }: { taskId: string; status: string }) {
+  const apiToken = process.env.CLICKUP_API_TOKEN;
+
+  if (!apiToken) {
+    throw new Error("CLICKUP_API_TOKEN is not configured");
+  }
+
+  const res = await fetch(`${CLICKUP_API_BASE}/task/${taskId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: apiToken,
+    },
+    body: JSON.stringify({ status }),
+  });
+
+  if (!res.ok) {
+    throw new Error(`ClickUp task update failed with ${res.status}: ${await res.text()}`);
   }
 
   return res.json();

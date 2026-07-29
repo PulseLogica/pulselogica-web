@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClickUpTask } from "@/lib/clickup";
+import { createClickUpTask, createClickUpProspectSubpage } from "@/lib/clickup";
 import type { PulseCheckPayload } from "@/lib/pulse-check-types";
 
 async function syncToGoogleSheets(payload: PulseCheckPayload) {
@@ -23,9 +23,10 @@ async function syncToGoogleSheets(payload: PulseCheckPayload) {
 export async function POST(req: NextRequest) {
   const payload: PulseCheckPayload = await req.json();
 
-  const [sheetsResult, clickupResult] = await Promise.allSettled([
+  const [sheetsResult, clickupResult, prospectSubpageResult] = await Promise.allSettled([
     syncToGoogleSheets(payload),
     createClickUpTask(payload),
+    createClickUpProspectSubpage(payload),
   ]);
 
   if (sheetsResult.status === "rejected") {
@@ -34,6 +35,12 @@ export async function POST(req: NextRequest) {
   if (clickupResult.status === "rejected") {
     console.error("Pulse Check ClickUp task creation failed:", clickupResult.reason);
   }
+  if (prospectSubpageResult.status === "rejected") {
+    console.error("Pulse Check ClickUp prospect subpage creation failed:", prospectSubpageResult.reason);
+  }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({
+    ok: true,
+    clickupTaskId: clickupResult.status === "fulfilled" ? clickupResult.value.id : null,
+  });
 }
