@@ -5,8 +5,7 @@ import { QUESTIONS, TRACK_COPY, type SliderQuestion, type Track } from "./consta
 import type { ContactFormValues } from "./schema";
 import Stepper from "./Stepper";
 import ContactForm from "./ContactForm";
-
-const GOOGLE_CALENDAR_BOOKING_URL = "https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ1e7bkdhxVtmh7MR9weu_jre8sd68v6Qc0ec7kPDrc4qAwQrZBTbpHMoe1auLTyfMVBhEt3Aitz";
+import BookingCalendar from "./BookingCalendar";
 
 function buildPulsePath(progressFraction: number, segCount: number) {
   const totalW = 500;
@@ -91,7 +90,7 @@ function SliderQuestionBlock({
   );
 }
 
-type Stage = "quiz" | "form" | "reveal";
+type Stage = "quiz" | "form" | "reveal" | "booking";
 
 export default function PulseCheck() {
   const [current, setCurrent] = useState(0);
@@ -99,6 +98,8 @@ export default function PulseCheck() {
     Array(QUESTIONS.length).fill(undefined)
   );
   const [stage, setStage] = useState<Stage>("quiz");
+  const [contact, setContact] = useState<ContactFormValues | null>(null);
+  const [clickupTaskId, setClickupTaskId] = useState<string | null>(null);
 
   const question = QUESTIONS[current];
   const firstUnanswered = rawAnswers.findIndex((a) => a === undefined);
@@ -160,14 +161,17 @@ export default function PulseCheck() {
     };
 
     try {
-      await fetch("/api/pulse-check", {
+      const res = await fetch("/api/pulse-check", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+      const data = await res.json();
+      setClickupTaskId(data.clickupTaskId ?? null);
     } catch (err) {
       console.error("Pulse Check sync failed:", err);
     }
+    setContact(contact);
     setStage("reveal");
   }
 
@@ -272,15 +276,18 @@ export default function PulseCheck() {
             <p className="text-base leading-[1.65] text-slate-400 max-w-[440px] mx-auto mb-7">
               {TRACK_COPY[track]}
             </p>
-            <a
-              href={GOOGLE_CALENDAR_BOOKING_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              type="button"
+              onClick={() => setStage("booking")}
               className="btn-primary inline-block text-black font-bold text-[15px] px-8 py-[15px] rounded-[10px]"
             >
               Book your Strategy Call
-            </a>
+            </button>
           </div>
+        )}
+
+        {stage === "booking" && contact && (
+          <BookingCalendar contact={contact} clickupTaskId={clickupTaskId} onBooked={() => {}} />
         )}
       </div>
 
