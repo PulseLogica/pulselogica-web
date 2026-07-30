@@ -21,6 +21,7 @@ export default function BookingCalendar({
   const [availability, setAvailability] = useState<Record<string, string[]>>({});
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [pendingTime, setPendingTime] = useState<string | null>(null);
   const [bookingState, setBookingState] = useState<"idle" | "booking" | "confirmed">("idle");
   const [confirmedSlot, setConfirmedSlot] = useState<{ date: string; time: string } | null>(null);
   const redirectTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -43,8 +44,9 @@ export default function BookingCalendar({
     };
   }, []);
 
-  async function handleSelectTime(time: string) {
-    if (!selectedDate) return;
+  async function confirmBooking() {
+    if (!selectedDate || !pendingTime) return;
+    const time = pendingTime;
     setBookingState("booking");
 
     try {
@@ -58,22 +60,28 @@ export default function BookingCalendar({
 
       setConfirmedSlot({ date: selectedDate, time });
       setBookingState("confirmed");
+      setPendingTime(null);
       onBooked();
       redirectTimeout.current = setTimeout(() => router.push("/"), 5000);
     } catch (err) {
       console.error("Booking failed:", err);
       setBookingState("idle");
+      setPendingTime(null);
     }
   }
 
+  function formatDateLabel(dateStr: string) {
+    const dateObj = new Date(`${dateStr}T00:00:00`);
+    return `${MONTH_LABELS[dateObj.getMonth()]} ${dateObj.getDate()}, ${dateObj.getFullYear()}`;
+  }
+
   if (bookingState === "confirmed" && confirmedSlot) {
-    const dateObj = new Date(`${confirmedSlot.date}T00:00:00`);
     return (
       <div className="text-center">
         <div className="text-[11px] tracking-[0.12em] uppercase text-slate-400 mb-2.5">Booking Confirmed</div>
         <div className="font-serif italic text-[36px] leading-[1.1] text-amber mb-5">You&apos;re booked!</div>
         <p className="text-base leading-[1.65] text-slate-400 max-w-[440px] mx-auto mb-2">
-          {MONTH_LABELS[dateObj.getMonth()]} {dateObj.getDate()}, {dateObj.getFullYear()} at {formatTime(confirmedSlot.time)}
+          {formatDateLabel(confirmedSlot.date)} at {formatTime(confirmedSlot.time)}
         </p>
         <p className="text-sm text-slate-500">Redirecting you home shortly…</p>
       </div>
@@ -154,12 +162,43 @@ export default function BookingCalendar({
               key={time}
               type="button"
               disabled={bookingState === "booking"}
-              onClick={() => handleSelectTime(time)}
+              onClick={() => setPendingTime(time)}
               className="btn-primary text-black font-semibold text-sm px-5 py-2.5 rounded-lg disabled:opacity-60"
             >
               {formatTime(time)}
             </button>
           ))}
+        </div>
+      )}
+
+      {pendingTime && selectedDate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 px-5">
+          <div className="card-dark w-full max-w-sm rounded-[18px] px-7 py-8 text-center">
+            <div className="text-[11px] tracking-[0.12em] uppercase text-slate-400 mb-2.5">
+              Confirm your booking
+            </div>
+            <p className="text-base leading-[1.65] text-slate-300 mb-7">
+              {formatDateLabel(selectedDate)} at {formatTime(pendingTime)}
+            </p>
+            <div className="flex flex-col gap-2.5">
+              <button
+                type="button"
+                onClick={confirmBooking}
+                disabled={bookingState === "booking"}
+                className="btn-primary text-black font-semibold text-sm px-5 py-2.5 rounded-lg disabled:opacity-60"
+              >
+                {bookingState === "booking" ? "Booking…" : "Confirm"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setPendingTime(null)}
+                disabled={bookingState === "booking"}
+                className="text-sm text-slate-400 hover:text-cream disabled:opacity-60"
+              >
+                Choose a different time
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

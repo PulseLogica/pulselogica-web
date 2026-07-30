@@ -29,9 +29,7 @@ function getCalendarId() {
 }
 
 function slotToDate(dateStr: string, time: string) {
-  const [hours, minutes] = time.split(":").map(Number);
-  const [year, month, day] = dateStr.split("-").map(Number);
-  return new Date(Date.UTC(year, month - 1, day, hours, minutes));
+  return new Date(`${dateStr}T${time}:00+08:00`);
 }
 
 function isWeekday(date: Date) {
