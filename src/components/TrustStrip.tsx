@@ -16,7 +16,7 @@ export default function TrustStrip() {
           </div>
           <div className="text-center px-4">
             <div className="text-sm text-slate-300">
-              Every deliverable ships with a named human reviewer
+              Dedicated expert review on every project
             </div>
           </div>
         </div>

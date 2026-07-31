@@ -16,7 +16,6 @@ export default function CTAFooter() {
           <div className="mt-14 flex flex-col items-center gap-4">
             <a
               href={BOOK_STRATEGY_SESSION_URL}
-              target="_blank"
               rel="noopener noreferrer"
               className="btn-primary text-black font-semibold text-[15px] px-10 py-2 rounded-lg"
             >
