@@ -30,11 +30,10 @@ export default function Nav() {
         </div>
         <a
           href={BOOK_STRATEGY_SESSION_URL}
-          target="_blank"
           rel="noopener noreferrer"
           className="hidden md:inline-block btn-primary text-black font-semibold text-sm px-5 py-2.5 rounded-lg"
         >
-          Book Strategy Session
+          Book a Discovery Call
         </a>
 
         <button

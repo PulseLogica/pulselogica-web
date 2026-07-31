@@ -32,11 +32,10 @@ export default function Hero() {
         <div className="mt-11 flex flex-col sm:flex-row gap-4 justify-center">
           <a
             href={BOOK_STRATEGY_SESSION_URL}
-            target="_blank"
             rel="noopener noreferrer"
             className="btn-primary text-black font-semibold text-[15px] px-8 py-4 rounded-lg"
           >
-            Book Strategy Session
+            Book a Discovery Call
           </a>
           <a href="#cases" className="btn-secondary text-white font-semibold text-[15px] px-8 py-4 rounded-lg">
             View examples
