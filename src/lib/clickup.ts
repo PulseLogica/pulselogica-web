@@ -8,10 +8,6 @@ const CUSTOM_FIELD_IDS = {
   website: "7f7d8448-5394-462b-b220-5763cdcf6374",
 };
 
-const PIPELINE_WORKSPACE_ID = "90161693471";
-const PROSPECTS_DOC_ID = "2kz0wgrz-996";
-const PROSPECTS_PAGE_ID = "2kz0wgrz-476";
-
 const SOURCE_VALUE = "website diagnostic";
 
 function buildTaskName({ contact, track }: PulseCheckPayload) {
@@ -102,32 +98,51 @@ export async function createClickUpTask(payload: PulseCheckPayload) {
 
 export async function createClickUpProspectSubpage(payload: PulseCheckPayload) {
   const apiToken = process.env.CLICKUP_API_TOKEN;
+  const workspaceId = process.env.CLICKUP_PIPELINE_WORKSPACE_ID;
+  const leadsFolderId = process.env.CLICKUP_LEADS_FOLDER_ID;
 
-  if (!apiToken) {
-    throw new Error("CLICKUP_API_TOKEN is not configured");
+  if (!apiToken || !workspaceId || !leadsFolderId) {
+    throw new Error(
+      "CLICKUP_API_TOKEN, CLICKUP_PIPELINE_WORKSPACE_ID, or CLICKUP_LEADS_FOLDER_ID is not configured"
+    );
   }
 
-  const res = await fetch(
-    `${CLICKUP_API_V3_BASE}/workspaces/${PIPELINE_WORKSPACE_ID}/docs/${PROSPECTS_DOC_ID}/pages`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: apiToken,
-      },
-      body: JSON.stringify({
-        parent_page_id: PROSPECTS_PAGE_ID,
-        name: `${payload.contact.firstName} ${payload.contact.lastName}`,
-        content: buildTaskDescription(payload),
-      }),
-    }
-  );
+  const docRes = await fetch(`${CLICKUP_API_V3_BASE}/workspaces/${workspaceId}/docs`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: apiToken,
+    },
+    body: JSON.stringify({
+      name: `${payload.contact.firstName} ${payload.contact.lastName}`,
+      parent: { id: leadsFolderId, type: 5 },
+      visibility: "PUBLIC",
+    }),
+  });
 
-  if (!res.ok) {
-    throw new Error(`ClickUp subpage creation failed with ${res.status}: ${await res.text()}`);
+  if (!docRes.ok) {
+    throw new Error(`ClickUp doc creation failed with ${docRes.status}: ${await docRes.text()}`);
   }
 
-  return res.json();
+  const doc = await docRes.json();
+
+  const pageRes = await fetch(`${CLICKUP_API_V3_BASE}/workspaces/${workspaceId}/docs/${doc.id}/pages`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: apiToken,
+    },
+    body: JSON.stringify({
+      name: "Overview",
+      content: buildTaskDescription(payload),
+    }),
+  });
+
+  if (!pageRes.ok) {
+    throw new Error(`ClickUp page creation failed with ${pageRes.status}: ${await pageRes.text()}`);
+  }
+
+  return pageRes.json();
 }
 
 export async function updateClickUpTask({ taskId, status }: { taskId: string; status: string }) {
