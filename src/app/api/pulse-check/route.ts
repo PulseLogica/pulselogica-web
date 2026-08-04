@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClickUpTask, createClickUpProspectSubpage } from "@/lib/clickup";
-import type { PulseCheckPayload } from "@/lib/pulse-check-types";
+import type { PulseCheckPayload } from "@/types/pulse-check-types";
 
 async function syncToGoogleSheets(payload: PulseCheckPayload) {
   const webhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL;

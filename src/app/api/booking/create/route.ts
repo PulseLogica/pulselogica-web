@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createBooking } from "@/lib/google-calendar";
 import { updateClickUpTask } from "@/lib/clickup";
-import type { ContactFormValues } from "@/components/PulseCheck/schema";
+import type { ContactFormValues } from "@/components/PulseCheck/utils/schema";
 
 export async function POST(req: NextRequest) {
   const { date, time, contact, clickupTaskId } = (await req.json()) as {
