@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { ContactFormValues } from "./schema";
+import type { ContactFormValues } from "./utils/schema";
 import { WEEKDAY_LABELS, MONTH_LABELS } from "@/lib/constants";
 import { formatTime, toDateStr } from "@/lib/helpers";
 

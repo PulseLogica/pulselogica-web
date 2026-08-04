@@ -2,7 +2,7 @@
 
 import { useFormik } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
-import { contactSchema, CONTACT_INITIAL_VALUES, type ContactFormValues } from "./schema";
+import { contactSchema, CONTACT_INITIAL_VALUES, type ContactFormValues } from "./utils/schema";
 
 function Field({
   label,

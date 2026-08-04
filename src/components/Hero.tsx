@@ -38,7 +38,7 @@ export default function Hero() {
             Book a Discovery Call
           </a>
           <a href="#cases" className="btn-secondary text-white font-semibold text-[15px] px-8 py-4 rounded-lg">
-            View examples
+            View case studies
           </a>
         </div>
       </div>

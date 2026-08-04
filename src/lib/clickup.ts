@@ -1,4 +1,4 @@
-import type { PulseCheckPayload } from "@/lib/pulse-check-types";
+import type { PulseCheckPayload } from "@/types/pulse-check-types";
 
 const CLICKUP_API_BASE = "https://api.clickup.com/api/v2";
 const CLICKUP_API_V3_BASE = "https://api.clickup.com/api/v3";
@@ -133,7 +133,7 @@ export async function createClickUpProspectSubpage(payload: PulseCheckPayload) {
       Authorization: apiToken,
     },
     body: JSON.stringify({
-      name: "Overview",
+      name: "Diagnostic Results",
       content: buildTaskDescription(payload),
     }),
   });
