@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { GOOGLE_CALENDAR_STRATEGY_SESSION } from "@/lib/constants";
+import { BOOK_STRATEGY_SESSION_URL } from "@/lib/constants";
 
 const LINKS = [
   { href: "#phases", label: "How it works" },
@@ -29,12 +29,11 @@ export default function Nav() {
           ))}
         </div>
         <a
-          href={GOOGLE_CALENDAR_STRATEGY_SESSION}
-          target="_blank"
+          href={BOOK_STRATEGY_SESSION_URL}
           rel="noopener noreferrer"
           className="hidden md:inline-block btn-primary text-black font-semibold text-sm px-5 py-2.5 rounded-lg"
         >
-          Book Strategy Session
+          Book a Discovery Call
         </a>
 
         <button

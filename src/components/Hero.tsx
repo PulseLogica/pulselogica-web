@@ -1,4 +1,4 @@
-import { GOOGLE_CALENDAR_STRATEGY_SESSION } from "@/lib/constants";
+import { BOOK_STRATEGY_SESSION_URL } from "@/lib/constants";
 
 export default function Hero() {
   return (
@@ -7,7 +7,7 @@ export default function Hero() {
 
       <div className="relative max-w-3xl mx-auto text-center">
         <span className="annot inline-block mb-8 px-4 py-1.5 rounded-full border border-white/10 bg-white/[.03]">
-          AI Operational Strategy
+          Systemize Before You Automate
         </span>
 
         <div className="relative flex justify-center my-14">
@@ -26,20 +26,19 @@ export default function Hero() {
           becomes logic.
         </h1>
         <p className="mt-7 text-lg text-slate-400 max-w-xl mx-auto leading-relaxed">
-          AI consulting for SMEs. We build it. We integrate it. You run the company.
+          Systems consulting for SMEs. We organize it. We simplify it. You run the company.
         </p>
 
         <div className="mt-11 flex flex-col sm:flex-row gap-4 justify-center">
           <a
-            href={GOOGLE_CALENDAR_STRATEGY_SESSION}
-            target="_blank"
+            href={BOOK_STRATEGY_SESSION_URL}
             rel="noopener noreferrer"
             className="btn-primary text-black font-semibold text-[15px] px-8 py-4 rounded-lg"
           >
-            Book Strategy Session
+            Book a Discovery Call
           </a>
           <a href="#cases" className="btn-secondary text-white font-semibold text-[15px] px-8 py-4 rounded-lg">
-            View examples
+            View case studies
           </a>
         </div>
       </div>

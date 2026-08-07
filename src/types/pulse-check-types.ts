@@ -1,5 +1,5 @@
-import type { ContactFormValues } from "@/components/PulseCheck/schema";
-import type { Track } from "@/components/PulseCheck/constants";
+import type { ContactFormValues } from "@/components/PulseCheck/utils/schema";
+import type { Track } from "@/components/PulseCheck/utils/constants";
 
 export type PulseCheckAnswer = {
   eyebrow: string;
