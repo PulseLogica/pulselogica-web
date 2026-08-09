@@ -99,7 +99,7 @@ export default function BookingCalendar({
 
   return (
     <div className="text-center">
-      <div className="text-[11px] tracking-[0.12em] uppercase text-slate-400 mb-2.5">Book your Strategy Call</div>
+      <div className="text-[11px] tracking-[0.12em] uppercase text-slate-400 mb-2.5">Book your Discovery Call</div>
 
       <div className="flex items-center justify-between mb-5">
         <button

@@ -15,7 +15,7 @@ export default function RevealStage({ track, onBook }: { track: Track; onBook: (
         onClick={onBook}
         className="btn-primary inline-block text-black font-bold text-[15px] px-8 py-[15px] rounded-[10px]"
       >
-        Book your Strategy Call
+        Book your Discovery Call
       </button>
     </div>
   );
