@@ -2,6 +2,22 @@
 
 ---
 
+## Privacy Policy Compliance Update - 2026-08-10
+
+### What's New
+- **Cookie Consent Notice** — The privacy policy now discloses that a cookie notice is presented on first visit, allowing visitors to accept or decline non-essential cookies.
+- **Legal Basis for Processing** — Added an explicit statement that personal data is processed on the basis of consent given at form submission, and where applicable, to take steps prior to a service engagement.
+- **Defined Retention Periods** — Replaced the general retention statement with specific terms: booking inquiries that don't convert are retained up to twelve (12) months from last contact; data tied to client engagements follows the applicable agreement or Philippine statutory requirements.
+- **Cross-Border Data Transfer Disclosure** — Documented that some service providers process data outside the Philippines, with protections consistent with Section 21 of the DPA's Implementing Rules and Regulations.
+- **Data Breach Notification Commitment** — Added a 72-hour notification commitment to the National Privacy Commission and affected data subjects, per Section 20(f) of the Data Privacy Act.
+- **Right to Data Portability** — Added to the data subject rights section, which now cites Sections 16 and 18 of the Data Privacy Act.
+- **NPC Registration Status** — New section documenting exemption status under NPC Circular No. 2022-04 (Track 3 Sworn Declaration).
+
+### Bug Fixes
+- Corrected the Data Protection Officer contact email published in the privacy policy.
+
+---
+
 ## Finalized Pulse Check; Minor Content Updates; Legal Documents Added - 2026-08-08
 
 ### What's New

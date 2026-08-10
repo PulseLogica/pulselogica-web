@@ -218,8 +218,8 @@ export default function PrivacyPolicyPage() {
             <strong className="text-white">Data Protection Officer:</strong> John Christopher Azcarraga
             <br />
             <strong className="text-white">Email:</strong>{" "}
-            <a href="mailto:kevin@pulselogica.com" className="hover:text-white transition">
-              kevin@pulselogica.com
+            <a href="mailto:business@pulselogica.com" className="hover:text-white transition">
+              business@pulselogica.com
             </a>
             <br />
             <strong className="text-white">Website:</strong> https://www.pulselogica.com/
