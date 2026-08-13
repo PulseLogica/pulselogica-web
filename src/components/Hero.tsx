@@ -8,7 +8,7 @@ const CHECKLIST = [
 
 export default function Hero() {
   return (
-    <header className="relative overflow-hidden pt-28 pb-20 max-w-6xl mx-auto px-8 sm:px-0">
+    <header className="relative overflow-hidden pt-28 pb-20 max-w-6xl mx-auto px-8">
       <div className="grid-overlay absolute inset-0"></div>
 
       <div className="relative max-w-6xl mx-auto grid md:grid-cols-2 gap-14 items-center">
