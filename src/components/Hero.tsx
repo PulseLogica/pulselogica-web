@@ -1,47 +1,91 @@
-import { BOOK_STRATEGY_SESSION_URL } from "@/lib/constants";
+import { BOOK_STRATEGY_SESSION_URL, HERO_VIDEO_EMBED_URL } from "@/lib/constants";
+
+const CHECKLIST = [
+  "A clear starting point. Not another framework to figure out.",
+  "Tested on real businesses, not slide decks.",
+  "Clarity first. Tools and AI come after.",
+];
 
 export default function Hero() {
   return (
-    <header className="relative overflow-hidden pt-28 pb-32 px-6">
+    <header className="relative overflow-hidden pt-28 pb-20 max-w-6xl mx-auto px-8">
       <div className="grid-overlay absolute inset-0"></div>
 
-      <div className="relative max-w-3xl mx-auto text-center">
-        <span className="annot inline-block mb-8 px-4 py-1.5 rounded-full border border-white/10 bg-white/[.03]">
-          Systemize Before You Automate
-        </span>
+      <div className="relative max-w-6xl mx-auto grid md:grid-cols-2 gap-14 items-center">
+        <div>
+          <h1 className="text-5xl md:text-6xl font-bold tracking-tight leading-[1.1]">
+            Confusion is expensive.
+            <br />
+            <span style={{ color: "var(--color-amber)" }}>Clarity</span> is free.
+          </h1>
+          <p className="mt-6 text-lg text-slate-400 max-w-xl leading-relaxed">
+            You&rsquo;re the pulse this business runs on. But right now it&rsquo;s pulled in too
+            many directions at once. One call. One clear starting point.
+          </p>
 
-        <div className="relative flex justify-center my-14">
-          <div className="glow-cube"></div>
-          <div className="pulse-line w-40" style={{ top: 60, left: "calc(50% - 220px)" }}></div>
-          <div className="pulse-line w-40" style={{ top: 60, right: "calc(50% - 220px)" }}></div>
-          <div className="pulse-line w-24" style={{ top: 30, left: "calc(50% - 140px)", opacity: 0.3 }}></div>
-          <div className="pulse-line w-24" style={{ top: 90, right: "calc(50% - 140px)", opacity: 0.3 }}></div>
+          <ul className="mt-8 space-y-3">
+            {CHECKLIST.map((item) => (
+              <li key={item} className="flex items-center gap-3 text-slate-300">
+                <span
+                  className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 text-[11px] font-extrabold"
+                  style={{ background: "var(--color-amber)", color: "#0A0F1D" }}
+                >
+                  ✓
+                </span>
+                {item}
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-10">
+            <a
+              href={BOOK_STRATEGY_SESSION_URL}
+              rel="noopener noreferrer"
+              className="btn-primary inline-flex items-center gap-2 text-black font-semibold text-[15px] px-8 py-4 rounded-lg"
+            >
+              Book a Discovery Call
+              <span aria-hidden="true">→</span>
+            </a>
+          </div>
         </div>
 
-        <h1 className="text-5xl md:text-7xl font-light tracking-tight leading-[1.05]">
-          Where your{" "}
-          <span className="font-serif italic" style={{ color: "var(--color-amber)" }}>
-            pulse
-          </span>{" "}
-          becomes logic.
-        </h1>
-        <p className="mt-7 text-lg text-slate-400 max-w-xl mx-auto leading-relaxed">
-          Systems consulting for SMEs. We organize it. We simplify it. You run the company.
-        </p>
-
-        <div className="mt-11 flex flex-col sm:flex-row gap-4 justify-center">
-          <a
-            href={BOOK_STRATEGY_SESSION_URL}
-            rel="noopener noreferrer"
-            className="btn-primary text-black font-semibold text-[15px] px-8 py-4 rounded-lg"
-          >
-            Book a Discovery Call
-          </a>
-          <a href="#cases" className="btn-secondary text-white font-semibold text-[15px] px-8 py-4 rounded-lg">
-            View case studies
-          </a>
+        <div className="card-dark rounded-2xl overflow-hidden">
+          <div className="relative aspect-[16/10]">
+            <iframe
+              src={HERO_VIDEO_EMBED_URL}
+              className="w-full h-full"
+              allow="autoplay; encrypted-media"
+              allowFullScreen
+            />
+          </div>
+          <div className="flex items-center justify-between px-5 py-4 border-t border-white/10">
+            <div className="flex items-center gap-2 text-sm">
+              <span
+                className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                style={{ background: "var(--color-amber)" }}
+              />
+              <span className="font-semibold text-white">Kevin, Founder</span>
+              <span className="text-slate-400">— why we systemize first</span>
+            </div>
+            <span className="text-sm text-slate-500">0:11</span>
+          </div>
         </div>
       </div>
+
+      <svg
+        viewBox="0 0 1200 40"
+        preserveAspectRatio="none"
+        className="relative w-full h-8 mt-16"
+      >
+        <path
+          d="M0,20 L540,20 L560,4 L580,36 L600,20 L1200,20"
+          fill="none"
+          stroke="var(--color-amber)"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
     </header>
   );
 }

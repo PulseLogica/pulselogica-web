@@ -127,8 +127,8 @@ export default function TermsAndConditionsPage() {
             <strong className="text-white">Entity:</strong> PulseLogica
             <br />
             <strong className="text-white">Email:</strong>{" "}
-            <a href="mailto:kevin@pulselogica.com" className="hover:text-white transition">
-              kevin@pulselogica.com
+            <a href="mailto:business@pulselogica.com" className="hover:text-white transition">
+              business@pulselogica.com
             </a>
             <br />
             <strong className="text-white">Website:</strong> https://www.pulselogica.com/
