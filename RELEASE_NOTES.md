@@ -2,6 +2,18 @@
 
 ---
 
+## release: minor content upgrade - 2026-08-17
+
+### What's New
+- Added a video introduction to the Hero section for a more engaging first impression
+- Updated CTA headline to emphasize a low-pressure discovery call experience
+- Renamed "Book A Call Now" button to "Discovery Call" for clearer intent
+
+### Bug Fixes
+- Corrected business contact email on the Terms & Conditions page (`business@pulselogica.com`)
+
+---
+
 ## Privacy Policy Compliance Update - 2026-08-10
 
 ### What's New
