@@ -58,17 +58,6 @@ export default function Hero() {
               allowFullScreen
             />
           </div>
-          <div className="flex items-center justify-between px-5 py-4 border-t border-white/10">
-            <div className="flex items-center gap-2 text-sm">
-              <span
-                className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                style={{ background: "var(--color-amber)" }}
-              />
-              <span className="font-semibold text-white">Kevin, Founder</span>
-              <span className="text-slate-400">— why we systemize first</span>
-            </div>
-            <span className="text-sm text-slate-500">0:11</span>
-          </div>
         </div>
       </div>
 

@@ -1,8 +1,8 @@
 import { google } from "googleapis";
 import type { ContactFormValues } from "@/components/PulseCheck/utils/schema";
 
-export const SLOT_TIMES = ["11:00", "13:00", "13:45", "14:30", "15:15", "16:00", "20:00", "20:45"];
-export const SLOT_DURATION_MINUTES = 45;
+export const SLOT_TIMES = ["11:00", "13:00", "13:45", "14:30", "15:15", "16:00", "20:00", "20:45", "21:30"];
+export const SLOT_DURATION_MINUTES = 30;
 export const TIMEZONE = "Asia/Manila";
 
 function getCalendarClient() {
