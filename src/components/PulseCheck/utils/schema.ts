@@ -5,7 +5,7 @@ const websiteSchema = z
   .string()
   .trim()
   .optional()
-  .refine((val) => tldRegex.test(val) || val.includes('localhost'), {
+  .refine((val) => !val || tldRegex.test(val) || val.includes('localhost'), {
     message: "Website must include a valid top-level domain extension (e.g., .com, .co)",
   })
   .transform((val) => {
