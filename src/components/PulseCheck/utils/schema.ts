@@ -4,6 +4,7 @@ const tldRegex = /\.[a-z]{2,}$/i;
 const websiteSchema = z
   .string()
   .trim()
+  .optional()
   .refine((val) => tldRegex.test(val) || val.includes('localhost'), {
     message: "Website must include a valid top-level domain extension (e.g., .com, .co)",
   })
