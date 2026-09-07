@@ -9,13 +9,14 @@ const websiteSchema = z
     message: "Website must include a valid top-level domain extension (e.g., .com, .co)",
   })
   .transform((val) => {
-    if (val.length > 0 && !/^https?:\/\//i.test(val)) {
+    if (!val) return val;
+    if (!/^https?:\/\//i.test(val)) {
       return `https://${val}`;
     }
     return val;
   })
   .pipe(
-    z.string().url({ message: "Invalid website format" })
+    z.string().url({ message: "Invalid website format" }).optional()
   );
 
 export const contactSchema = z.object({
