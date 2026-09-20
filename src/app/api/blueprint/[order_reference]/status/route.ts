@@ -15,7 +15,7 @@ export async function GET(
     .single<{ status: "pending" | "paid" }>();
 
   if (error || !order) {
-    return NextResponse.json({ error: "order not found" }, { status: 404 });
+    return NextResponse.json({ error: "Order not found!" }, { status: 404 });
   }
 
   return NextResponse.json({ status: order.status });
