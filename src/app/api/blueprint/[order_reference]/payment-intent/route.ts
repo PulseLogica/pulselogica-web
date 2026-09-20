@@ -35,7 +35,11 @@ export async function POST(
       .update({ paymongo_payment_intent_id: intentId })
       .eq("order_reference", orderReference);
 
-    return NextResponse.json({ qrImageUrl, expiresAt });
+    return NextResponse.json({
+      qrImageUrl,
+      expiresAt,
+      unlockPriceCentavos: order.unlock_price_centavos,
+    });
   } catch (err) {
     console.error("Failed to create PayMongo payment intent:", err);
     return NextResponse.json({ error: "failed to create payment intent" }, { status: 500 });
