@@ -80,10 +80,24 @@ export async function createQrPaymentIntent(orderReference: string, amountCentav
 }
 
 export function verifyPaymongoSignature(rawBody: string, signatureHeader: string, secret: string): boolean {
-  const expected = crypto.createHmac("sha256", secret).update(rawBody).digest("hex");
+  const parts = Object.fromEntries(
+    signatureHeader.split(",").map((part) => {
+      const [key, value] = part.split("=");
+      return [key, value];
+    })
+  );
 
-  const expectedBuf = Buffer.from(expected);
-  const signatureBuf = Buffer.from(signatureHeader);
+  const timestamp = parts.t;
+  const signature = parts.li || parts.te;
+  if (!timestamp || !signature) return false;
+
+  const expected = crypto
+    .createHmac("sha256", secret)
+    .update(`${timestamp}.${rawBody}`)
+    .digest("hex");
+
+  const expectedBuf = Buffer.from(expected, "hex");
+  const signatureBuf = Buffer.from(signature, "hex");
   if (expectedBuf.length !== signatureBuf.length) return false;
 
   return crypto.timingSafeEqual(expectedBuf, signatureBuf);

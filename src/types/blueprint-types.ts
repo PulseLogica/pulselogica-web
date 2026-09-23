@@ -12,11 +12,21 @@ export type BlueprintOrder = {
 };
 
 export type PaymongoWebhookEvent = {
-  id: string;
-  type: string;
-  attributes: {
-    amount: number;
-    status: string;
-    metadata?: { order_reference?: string };
+  data: {
+    id: string;
+    type: string;
+    attributes: {
+      type: string;
+      livemode: boolean;
+      data: {
+        id: string;
+        type: string;
+        attributes: {
+          amount: number;
+          status: string;
+          metadata?: { order_reference?: string };
+        };
+      };
+    };
   };
 };

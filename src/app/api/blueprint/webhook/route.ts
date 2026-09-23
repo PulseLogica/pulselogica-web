@@ -32,25 +32,27 @@ export async function POST(req: NextRequest) {
 
   const event = JSON.parse(rawBody) as PaymongoWebhookEvent;
   const supabase = getSupabaseServerClient();
+  const eventId = event.data.id;
+  const payment = event.data.attributes.data;
 
-  if (event.type !== "payment" || event.attributes.status !== "paid") {
+  if (event.data.attributes.type !== "payment.paid" || payment.attributes.status !== "paid") {
     return NextResponse.json({ ok: true, ignored: true });
   }
 
   const { data: existingEvent } = await supabase
     .from("blueprint_webhook_events")
     .select("event_id")
-    .eq("event_id", event.id)
+    .eq("event_id", eventId)
     .maybeSingle();
 
   if (existingEvent) {
     return NextResponse.json({ ok: true, alreadyProcessed: true });
   }
 
-  const orderReference = event.attributes.metadata?.order_reference;
+  const orderReference = payment.attributes.metadata?.order_reference;
 
   if (!orderReference) {
-    console.error("PayMongo webhook event missing order_reference metadata:", event.id);
+    console.error("PayMongo webhook event missing order_reference metadata:", eventId);
     return NextResponse.json({ ok: true, ignored: true });
   }
 
@@ -65,9 +67,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, ignored: true });
   }
 
-  if (event.attributes.amount !== order.unlock_price_centavos) {
+  if (payment.attributes.amount !== order.unlock_price_centavos) {
     console.error(
-      `PayMongo webhook amount mismatch for order ${orderReference}: expected ${order.unlock_price_centavos}, got ${event.attributes.amount}`
+      `PayMongo webhook amount mismatch for order ${orderReference}: expected ${order.unlock_price_centavos}, got ${payment.attributes.amount}`
     );
     return NextResponse.json({ ok: true, ignored: true });
   }
@@ -90,7 +92,7 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  await supabase.from("blueprint_webhook_events").insert({ event_id: event.id });
+  await supabase.from("blueprint_webhook_events").insert({ event_id: eventId });
 
   return NextResponse.json({ ok: true });
 }
