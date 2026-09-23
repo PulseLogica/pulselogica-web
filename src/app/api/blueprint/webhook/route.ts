@@ -4,20 +4,30 @@ import { verifyPaymongoSignature } from "@/lib/paymongo";
 import { getUnlockedPdfBuffer } from "@/lib/google-drive";
 import { sendUnlockedBlueprintEmail } from "@/lib/email";
 import type { BlueprintOrder, PaymongoWebhookEvent } from "@/types/blueprint-types";
+import { logInfo } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
   const webhookSecret = process.env.PAYMONGO_WEBHOOK_SECRET;
 
   if (!webhookSecret) {
     console.error("PAYMONGO_WEBHOOK_SECRET is not configured");
-    return NextResponse.json({ error: "webhook not configured" }, { status: 500 });
+    return NextResponse.json({ error: "Webhook not configured" }, { status: 500 });
   }
 
   const rawBody = await req.text();
   const signatureHeader = req.headers.get("paymongo-signature");
 
+  logInfo("paymongo_webhook_received", {
+    method: req.method,
+    path: req.nextUrl.pathname,
+    headers: Object.fromEntries(req.headers.entries()),
+    hasSignatureHeader: Boolean(signatureHeader),
+    bodyLength: rawBody.length,
+    rawBody
+  });
+
   if (!signatureHeader || !verifyPaymongoSignature(rawBody, signatureHeader, webhookSecret)) {
-    return NextResponse.json({ error: "invalid signature" }, { status: 401 });
+    return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
 
   const event = JSON.parse(rawBody) as PaymongoWebhookEvent;
