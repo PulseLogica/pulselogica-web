@@ -9,6 +9,8 @@ export type BlueprintOrder = {
   paymongo_payment_intent_id: string | null;
   created_at: string;
   paid_at: string | null;
+  delivery_status: "pending" | "sent" | "failed";
+  delivered_at: string | null;
 };
 
 export type PaymongoWebhookEvent = {

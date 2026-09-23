@@ -4,7 +4,7 @@ import { verifyPaymongoSignature } from "@/lib/paymongo";
 import { getUnlockedPdfBuffer } from "@/lib/google-drive";
 import { sendUnlockedBlueprintEmail } from "@/lib/email";
 import type { BlueprintOrder, PaymongoWebhookEvent } from "@/types/blueprint-types";
-import { logInfo } from "@/lib/logger";
+import { logInfo, logError } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
   const webhookSecret = process.env.PAYMONGO_WEBHOOK_SECRET;
@@ -79,7 +79,9 @@ export async function POST(req: NextRequest) {
       .from("blueprint_orders")
       .update({ status: "paid", paid_at: new Date().toISOString() })
       .eq("order_reference", orderReference);
+  }
 
+  if (order.delivery_status !== "sent") {
     try {
       const pdfBuffer = await getUnlockedPdfBuffer(order.drive_file_id);
       await sendUnlockedBlueprintEmail({
@@ -87,8 +89,20 @@ export async function POST(req: NextRequest) {
         clientName: order.client_name,
         pdfBuffer,
       });
+
+      await supabase
+        .from("blueprint_orders")
+        .update({ delivery_status: "sent", delivered_at: new Date().toISOString() })
+        .eq("order_reference", orderReference);
+
+      logInfo("blueprint_delivered", { orderReference });
     } catch (err) {
-      console.error(`Failed to deliver unlocked blueprint for order ${orderReference}:`, err);
+      await supabase
+        .from("blueprint_orders")
+        .update({ delivery_status: "failed" })
+        .eq("order_reference", orderReference);
+
+      logError("blueprint_delivery_failed", { orderReference }, err);
     }
   }
 
