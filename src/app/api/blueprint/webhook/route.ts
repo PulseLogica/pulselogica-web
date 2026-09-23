@@ -5,11 +5,6 @@ import { getUnlockedPdfBuffer } from "@/lib/google-drive";
 import { sendUnlockedBlueprintEmail } from "@/lib/email";
 import type { BlueprintOrder, PaymongoWebhookEvent } from "@/types/blueprint-types";
 
-// NOTE: confirm the exact event type name PayMongo sends for a completed QR Ph
-// payment against the actual API surface in use (e.g. "payment.paid" vs
-// "checkout_session.payment.paid") — flagged as an open item in the design doc.
-const PAID_EVENT_TYPES = ["payment.paid", "checkout_session.payment.paid"];
-
 export async function POST(req: NextRequest) {
   const webhookSecret = process.env.PAYMONGO_WEBHOOK_SECRET;
 
@@ -28,7 +23,7 @@ export async function POST(req: NextRequest) {
   const event = JSON.parse(rawBody) as PaymongoWebhookEvent;
   const supabase = getSupabaseServerClient();
 
-  if (!PAID_EVENT_TYPES.includes(event.type)) {
+  if (event.type !== "payment" || event.attributes.status !== "paid") {
     return NextResponse.json({ ok: true, ignored: true });
   }
 
@@ -42,7 +37,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, alreadyProcessed: true });
   }
 
-  const orderReference = event.data.attributes.metadata?.order_reference;
+  const orderReference = event.attributes.metadata?.order_reference;
 
   if (!orderReference) {
     console.error("PayMongo webhook event missing order_reference metadata:", event.id);
@@ -60,9 +55,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, ignored: true });
   }
 
-  if (event.data.attributes.amount !== order.unlock_price_centavos) {
+  if (event.attributes.amount !== order.unlock_price_centavos) {
     console.error(
-      `PayMongo webhook amount mismatch for order ${orderReference}: expected ${order.unlock_price_centavos}, got ${event.data.attributes.amount}`
+      `PayMongo webhook amount mismatch for order ${orderReference}: expected ${order.unlock_price_centavos}, got ${event.attributes.amount}`
     );
     return NextResponse.json({ ok: true, ignored: true });
   }

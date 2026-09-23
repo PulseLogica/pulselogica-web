@@ -14,12 +14,9 @@ export type BlueprintOrder = {
 export type PaymongoWebhookEvent = {
   id: string;
   type: string;
-  data: {
-    id: string;
-    attributes: {
-      type: string;
-      amount: number;
-      metadata?: { order_reference?: string };
-    };
+  attributes: {
+    amount: number;
+    status: string;
+    metadata?: { order_reference?: string };
   };
 };
