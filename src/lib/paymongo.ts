@@ -70,10 +70,6 @@ export async function createQrPaymentIntent(orderReference: string, amountCentav
   }
 
   const attached = await attachRes.json();
-
-  // NOTE: field path below (next_action.code.image_url / expires_at) is PayMongo's
-  // documented shape for e-wallet/QR "next_action" responses as of this writing —
-  // confirm against a real test call / PayMongo's current API docs before relying on it.
   const nextAction = attached.data.attributes.next_action;
 
   return {
@@ -84,26 +80,10 @@ export async function createQrPaymentIntent(orderReference: string, amountCentav
 }
 
 export function verifyPaymongoSignature(rawBody: string, signatureHeader: string, secret: string): boolean {
-  // PayMongo's Paymongo-Signature header format: "t=<timestamp>,te=<test-sig>,li=<live-sig>"
-  // Confirm this exact format against PayMongo's current webhook docs before relying on it.
-  const parts = Object.fromEntries(
-    signatureHeader.split(",").map((part) => {
-      const [key, value] = part.split("=");
-      return [key, value];
-    })
-  );
+  const expected = crypto.createHmac("sha256", secret).update(rawBody).digest("hex");
 
-  const timestamp = parts.t;
-  const signature = parts.li ?? parts.te;
-  if (!timestamp || !signature) return false;
-
-  const expected = crypto
-    .createHmac("sha256", secret)
-    .update(`${timestamp}.${rawBody}`)
-    .digest("hex");
-
-  const expectedBuf = Buffer.from(expected, "hex");
-  const signatureBuf = Buffer.from(signature, "hex");
+  const expectedBuf = Buffer.from(expected);
+  const signatureBuf = Buffer.from(signatureHeader);
   if (expectedBuf.length !== signatureBuf.length) return false;
 
   return crypto.timingSafeEqual(expectedBuf, signatureBuf);
