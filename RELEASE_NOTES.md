@@ -2,6 +2,19 @@
 
 ---
 
+## release: Phases section redesign - 2026-09-28
+
+### What's New
+- Redesigned the "Phases" section into an interactive 4-step tabbed framework (Audit → Blueprint → Solution → Support), replacing the previous static 3-phase layout
+- Each step now includes its own copy, checklist, and a live "mock panel" preview (dependency signals, blueprint scorecard, module status, retainer status)
+- Updated section heading from "Three Steps" to "Four Steps. One Framework."
+
+### Internal / Technical
+- Added new CSS variables to `globals.css` (`--color-amber-soft`, `--color-slate-soft`, `--color-white-soft`, `--color-white-faint`, `--color-green`, `--color-green-soft`), following the existing `--color-<name>` convention
+- Replaced hardcoded hex/rgba color values in `Phases.tsx` with references to these variables
+
+---
+
 ## release: minor content upgrade - 2026-08-17
 
 ### What's New
