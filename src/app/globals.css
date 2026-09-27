@@ -6,10 +6,16 @@
   --color-amber: #FF7A00;
   --color-amber-hover: #FF8C1A;
   --color-amber-deep: #B84E00;
+  --color-amber-soft: rgba(255, 122, 0, 0.15);
   --color-bg-mid: #0A0F1D;
   --color-bg-deep: #020408;
   --color-slate: #94A3B8;
+  --color-slate-soft: rgba(148, 163, 184, 0.12);
   --color-white: #fff;
+  --color-white-soft: rgba(255, 255, 255, 0.1);
+  --color-white-faint: rgba(255, 255, 255, 0.02);
+  --color-green: #5EDE8F;
+  --color-green-soft: rgba(94, 222, 143, 0.15);
 }
 
 html {
