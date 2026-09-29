@@ -2,6 +2,13 @@
 
 ---
 
+## release: Metricool tracking pixel - 2026-09-29
+
+### What's New
+- Added the Metricool tracking pixel to the landing page, active only on Production deployments (gated on Vercel's `VERCEL_ENV`, no manual configuration required)
+
+---
+
 ## release: Phases section redesign - 2026-09-28
 
 ### What's New
