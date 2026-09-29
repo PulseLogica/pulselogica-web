@@ -34,12 +34,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+  const isProduction = process.env.VERCEL_ENV === "production";
 
   return (
     <html lang="en" className={`${inter.variable} ${instrumentSerif.variable}`}>
       <body className="font-sans antialiased">
         {children}
         {gaId && <GoogleAnalytics gaId={gaId} />}
+        {isProduction && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src="https://tracker.metricool.com/c3po.jpg?hash=1557ec19f686b25f18330c6ff58027a"
+            alt=""
+            aria-hidden="true"
+          />
+        )}
       </body>
     </html>
   );
