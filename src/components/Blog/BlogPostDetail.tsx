@@ -66,15 +66,6 @@ export default function BlogPostDetail({
         </div>
       )}
 
-      <div className="max-w-3xl mx-auto px-6 pb-20 text-center">
-        <a
-          href={BOOK_STRATEGY_SESSION_URL}
-          className="btn-primary inline-block text-black font-bold text-[15px] px-8 py-4 rounded-[10px]"
-        >
-          Book your Discovery Call
-        </a>
-      </div>
-
       {relatedPosts.length > 0 && (
         <section className="border-t border-white/10 py-20 px-6">
           <div className="max-w-5xl mx-auto">

@@ -14,10 +14,12 @@ export default async function BlogPage() {
   const posts = await getPublishedPosts();
 
   return (
-    <main>
+    <main className="min-h-screen flex flex-col">
       <ScrollReveal />
       <Nav />
-      <BlogIndex posts={posts} />
+      <div className="flex-1">
+        <BlogIndex posts={posts} />
+      </div>
       <Footer />
       <BackToTop />
     </main>

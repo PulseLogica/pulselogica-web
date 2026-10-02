@@ -15,17 +15,16 @@ const LINKS = [
 
 function NavLink({ href, label, onClick }: { href: string; label: string; onClick?: () => void }) {
   const className = "hover:text-white transition";
-  if (href.startsWith("/")) {
-    return (
-      <Link href={href} onClick={onClick} className={className}>
-        {label}
-      </Link>
-    );
-  }
+  // In-page anchors (e.g. "#phases") need to resolve against the homepage
+  // from any route, not just when already on "/" — prefixing with "/"
+  // makes next/link navigate to the homepage and then scroll to the
+  // section, instead of a bare "#phases" anchor doing nothing on other pages.
+  const resolvedHref = href.startsWith("#") ? `/${href}` : href;
+
   return (
-    <a href={href} onClick={onClick} className={className}>
+    <Link href={resolvedHref} onClick={onClick} className={className}>
       {label}
-    </a>
+    </Link>
   );
 }
 

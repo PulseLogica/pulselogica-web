@@ -55,10 +55,12 @@ export default async function BlogPostPage({
     .slice(0, 3);
 
   return (
-    <main>
+    <main className="min-h-screen flex flex-col">
       <ScrollReveal />
       <Nav />
-      <BlogPostDetail post={post} relatedPosts={relatedPosts} />
+      <div className="flex-1">
+        <BlogPostDetail post={post} relatedPosts={relatedPosts} />
+      </div>
       <Footer />
       <BackToTop />
     </main>
