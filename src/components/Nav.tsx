@@ -8,9 +8,26 @@ import { BOOK_STRATEGY_SESSION_URL } from "@/lib/constants";
 const LINKS = [
   { href: "#phases", label: "How it works" },
   { href: "#cases", label: "Case Studies" },
+  { href: "/blog", label: "Blog" },
   { href: "#proof", label: "Proof" },
   { href: "#book", label: "Book a call" },
 ];
+
+function NavLink({ href, label, onClick }: { href: string; label: string; onClick?: () => void }) {
+  const className = "hover:text-white transition";
+  if (href.startsWith("/")) {
+    return (
+      <Link href={href} onClick={onClick} className={className}>
+        {label}
+      </Link>
+    );
+  }
+  return (
+    <a href={href} onClick={onClick} className={className}>
+      {label}
+    </a>
+  );
+}
 
 export default function Nav() {
   const [open, setOpen] = useState(false);
@@ -23,9 +40,7 @@ export default function Nav() {
         </Link>
         <div className="hidden md:flex gap-8 text-sm text-slate-400">
           {LINKS.map((link) => (
-            <a key={link.href} href={link.href} className="hover:text-white transition">
-              {link.label}
-            </a>
+            <NavLink key={link.href} href={link.href} label={link.label} />
           ))}
         </div>
         <a
@@ -62,14 +77,7 @@ export default function Nav() {
       {open && (
         <div className="md:hidden border-t border-white/10 px-6 py-4 flex flex-col gap-4 text-sm text-slate-400">
           {LINKS.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              onClick={() => setOpen(false)}
-              className="hover:text-white transition"
-            >
-              {link.label}
-            </a>
+            <NavLink key={link.href} href={link.href} label={link.label} onClick={() => setOpen(false)} />
           ))}
         </div>
       )}
