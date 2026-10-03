@@ -22,7 +22,7 @@ export async function generateMetadata({
   if (!post) return {};
 
   return {
-    title: `${post.title} — PulseLogica Blog`,
+    title: `${post.title} — Pulselogica Blog`,
     description: post.excerpt,
     openGraph: {
       title: post.title,

@@ -34,8 +34,8 @@ export default function Nav() {
   return (
     <nav className="sticky top-0 z-50 backdrop-blur-xl bg-black/40 border-b border-white/10">
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-        <Link href="/" aria-label="PulseLogica home" className="flex items-center gap-2">
-          <Image src="/assets/logo.png" alt="PulseLogica" width={120} height={32} className="h-8 w-auto" />
+        <Link href="/" aria-label="Pulselogica home" className="flex items-center gap-2">
+          <Image src="/assets/logo.png" alt="Pulselogica" width={120} height={32} className="h-8 w-auto" />
         </Link>
         <div className="hidden md:flex gap-8 text-sm text-slate-400">
           {LINKS.map((link) => (

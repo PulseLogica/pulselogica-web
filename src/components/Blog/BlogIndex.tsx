@@ -14,7 +14,7 @@ export default function BlogIndex({ posts }: { posts: BlogPostListItem[] }) {
         <div className="text-center mb-16">
           <span className="annot">From the field</span>
           <h1 className="mt-5 text-4xl md:text-5xl font-light tracking-tight">
-            The PulseLogica Blog
+            The Pulselogica Blog
           </h1>
           <p className="mt-4 text-lg text-slate-400 max-w-xl mx-auto">
             Notes on systems, operations, and running a business that doesn&rsquo;t depend on you.

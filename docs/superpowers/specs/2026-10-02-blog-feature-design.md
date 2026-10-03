@@ -1,7 +1,7 @@
 # Blog Feature — Design
 
 ## Context
-PulseLogica's marketing site has no content-marketing surface today — only static pages (Hero, Phases, Case Studies, Pulse Check, legal pages). A blog improves SEO visibility and gives the sales funnel something to link to/nurture leads with. Per the user's decisions: content is Supabase-backed (not hardcoded TS data like case studies), authored directly via the Supabase Table Editor for v1 (no admin UI — same pattern already established for `blueprint_orders`, where order rows are created externally), body content is Markdown, and categories/tags are included from the start.
+Pulselogica's marketing site has no content-marketing surface today — only static pages (Hero, Phases, Case Studies, Pulse Check, legal pages). A blog improves SEO visibility and gives the sales funnel something to link to/nurture leads with. Per the user's decisions: content is Supabase-backed (not hardcoded TS data like case studies), authored directly via the Supabase Table Editor for v1 (no admin UI — same pattern already established for `blueprint_orders`, where order rows are created externally), body content is Markdown, and categories/tags are included from the start.
 
 This plan covers schema, validation, routing, and UI/UX. No code is written yet — this is the spec to implement against.
 
@@ -32,7 +32,7 @@ create table blog_posts (
   excerpt text not null,
   content_markdown text not null,
   cover_image_url text,
-  author_name text not null default 'PulseLogica Team',
+  author_name text not null default 'Pulselogica Team',
   category_id uuid references blog_categories(id),
   status text not null default 'draft' check (status in ('draft', 'published')),
   published_at timestamptz,

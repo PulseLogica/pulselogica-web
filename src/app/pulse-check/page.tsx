@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import PulseCheck from "@/components/PulseCheck";
 
 export const metadata: Metadata = {
-  title: "Pulse Check — PulseLogica",
+  title: "Pulse Check — Pulselogica",
   description:
     "A short, self-serve diagnostic to see where your business stands — dependency, urgency, and what to fix first.",
 };

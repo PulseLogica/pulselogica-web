@@ -7,9 +7,9 @@ import LegalPageLayout, { LegalSection } from "@/components/LegalPageLayout";
 import BulletList from "@/components/ui/BulletList";
 
 export const metadata: Metadata = {
-  title: "Terms and Conditions — PulseLogica",
+  title: "Terms and Conditions — Pulselogica",
   description:
-    "The terms and conditions governing your use of the PulseLogica website and its consultation booking features.",
+    "The terms and conditions governing your use of the Pulselogica website and its consultation booking features.",
 };
 
 export default function TermsAndConditionsPage() {
@@ -17,9 +17,9 @@ export default function TermsAndConditionsPage() {
     <main>
       <ScrollReveal />
       <Nav />
-      <LegalPageLayout title="PulseLogica Terms and Conditions" lastUpdated="July 24, 2026">
+      <LegalPageLayout title="Pulselogica Terms and Conditions" lastUpdated="July 24, 2026">
         <p className="text-slate-400 leading-relaxed">
-          Welcome to PulseLogica. By accessing or using our website
+          Welcome to Pulselogica. By accessing or using our website
           (https://www.pulselogica.com/), you agree to comply with and be bound by the following
           Terms and Conditions. Please read them carefully.
         </p>
@@ -37,7 +37,7 @@ export default function TermsAndConditionsPage() {
             items={[
               <>
                 <strong className="text-white">Purpose:</strong> This Website serves as an
-                informational platform introducing PulseLogica&rsquo;s operator-led systemization
+                informational platform introducing Pulselogica&rsquo;s operator-led systemization
                 and legacy transition services. It also enables visitors to schedule initial
                 consultation calls via our &ldquo;Book a Call&rdquo; functionality.
               </>,
@@ -54,12 +54,12 @@ export default function TermsAndConditionsPage() {
           <p>
             All content published on this Website — including logos, copy, designs, graphics, and
             underlying operational frameworks — is the exclusive intellectual property of
-            PulseLogica or its licensors and is protected under Philippine copyright and
+            Pulselogica or its licensors and is protected under Philippine copyright and
             intellectual property laws.
           </p>
           <p>
             You may not reproduce, distribute, or modify any content from this site without prior
-            written permission from PulseLogica.
+            written permission from Pulselogica.
           </p>
         </LegalSection>
 
@@ -67,7 +67,7 @@ export default function TermsAndConditionsPage() {
           <BulletList
             items={[
               "Submitting your email or booking a call through the Website does not automatically establish a formal commercial contract or service agreement.",
-              "Formal engagements, operational blueprints, and service scope are governed separately by dedicated client agreements executed directly between PulseLogica and the client.",
+              "Formal engagements, operational blueprints, and service scope are governed separately by dedicated client agreements executed directly between Pulselogica and the client.",
             ]}
           />
         </LegalSection>
@@ -79,12 +79,12 @@ export default function TermsAndConditionsPage() {
                 <strong className="text-white">&ldquo;As-Is&rdquo; Basis:</strong> The Website and
                 its contents are provided on an &ldquo;as is&rdquo; and &ldquo;as
                 available&rdquo; basis without warranties of any kind. While we strive for
-                accuracy, PulseLogica does not warrant that site functions will be uninterrupted
+                accuracy, Pulselogica does not warrant that site functions will be uninterrupted
                 or error-free.
               </>,
               <>
                 <strong className="text-white">Limitation:</strong> To the maximum extent
-                permitted under Philippine law, PulseLogica shall not be liable for any direct,
+                permitted under Philippine law, Pulselogica shall not be liable for any direct,
                 indirect, incidental, or consequential damages resulting from your use of or
                 inability to use this Website.
               </>,
@@ -114,7 +114,7 @@ export default function TermsAndConditionsPage() {
 
         <LegalSection heading="8. Updates to These Terms">
           <p>
-            PulseLogica reserves the right to revise or replace these Terms at any time. Updated
+            Pulselogica reserves the right to revise or replace these Terms at any time. Updated
             versions will be posted on this page with a revised &ldquo;Last Updated&rdquo; date.
             Continued use of the Website after updates indicates your acceptance of the revised
             Terms.
@@ -124,7 +124,7 @@ export default function TermsAndConditionsPage() {
         <LegalSection heading="9. Contact Us">
           <p>For questions regarding these Terms and Conditions, please reach out to:</p>
           <p>
-            <strong className="text-white">Entity:</strong> PulseLogica
+            <strong className="text-white">Entity:</strong> Pulselogica
             <br />
             <strong className="text-white">Email:</strong>{" "}
             <a href="mailto:business@pulselogica.com" className="hover:text-white transition">
