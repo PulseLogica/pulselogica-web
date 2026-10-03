@@ -15,7 +15,7 @@ create table blog_posts (
   excerpt text not null,
   content_markdown text not null,
   cover_image_url text,
-  author_name text not null default 'PulseLogica Team',
+  author_name text not null default 'Pulselogica Team',
   category_id uuid references blog_categories(id),
   status text not null default 'draft' check (status in ('draft', 'published')),
   published_at timestamptz,

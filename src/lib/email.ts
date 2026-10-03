@@ -23,7 +23,7 @@ export async function sendUnlockedBlueprintEmail({
   const greetingName = clientName?.trim() || "there";
 
   const { error } = await resend.emails.send({
-    from: "PulseLogica <business@pulselogica.com>",
+    from: "Pulselogica <business@pulselogica.com>",
     to,
     subject: "Your Operational Blueprint is unlocked",
     text: [
@@ -32,11 +32,11 @@ export async function sendUnlockedBlueprintEmail({
       "Payment received — your full Operational Blueprint is attached to this email.",
       "",
       "Where your pulse becomes logic.",
-      "PulseLogica",
+      "Pulselogica",
     ].join("\n"),
     attachments: [
       {
-        filename: "PulseLogica-Operational-Blueprint.pdf",
+        filename: "Pulselogica-Operational-Blueprint.pdf",
         content: pdfBuffer,
       },
     ],

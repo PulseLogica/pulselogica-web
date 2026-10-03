@@ -7,7 +7,7 @@ export default function Proof() {
           &ldquo;We built this inside our own construction company first. We were the bottleneck, and we had to fix it.&rdquo;
         </p>
         <div className="mt-8 text-sm text-slate-400">
-          <span className="text-white font-medium">Kevin</span> — Founder, PulseLogica
+          <span className="text-white font-medium">Kevin</span> — Founder, Pulselogica
         </div>
       </div>
     </section>

@@ -20,7 +20,7 @@ const instrumentSerif = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  title: "PulseLogica — Where your pulse becomes logic.",
+  title: "Pulselogica — Where your pulse becomes logic.",
   description:
     "Systems consulting for SMEs. We organize it. We simplify it. You run the company.",
   icons: {

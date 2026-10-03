@@ -6,7 +6,7 @@ import BlogIndex from "@/components/Blog/BlogIndex";
 import { getPublishedPosts } from "@/lib/blog";
 
 export const metadata = {
-  title: "Blog — PulseLogica",
+  title: "Blog — Pulselogica",
   description: "Notes on systems, operations, and running a business that doesn't depend on you.",
 };
 

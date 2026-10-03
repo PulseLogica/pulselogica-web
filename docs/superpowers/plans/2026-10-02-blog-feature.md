@@ -50,7 +50,7 @@ create table blog_posts (
   excerpt text not null,
   content_markdown text not null,
   cover_image_url text,
-  author_name text not null default 'PulseLogica Team',
+  author_name text not null default 'Pulselogica Team',
   category_id uuid references blog_categories(id),
   status text not null default 'draft' check (status in ('draft', 'published')),
   published_at timestamptz,
@@ -287,7 +287,7 @@ export default function BlogIndex({ posts }: { posts: BlogPostListItem[] }) {
         <div className="text-center mb-16">
           <span className="annot">From the field</span>
           <h1 className="mt-5 text-4xl md:text-5xl font-light tracking-tight">
-            The PulseLogica Blog
+            The Pulselogica Blog
           </h1>
           <p className="mt-4 text-lg text-slate-400 max-w-xl mx-auto">
             Notes on systems, operations, and running a business that doesn&rsquo;t depend on you.
@@ -350,7 +350,7 @@ import BlogIndex from "@/components/Blog/BlogIndex";
 import { getPublishedPosts } from "@/lib/blog";
 
 export const metadata = {
-  title: "Blog — PulseLogica",
+  title: "Blog — Pulselogica",
   description: "Notes on systems, operations, and running a business that doesn't depend on you.",
 };
 
@@ -610,7 +610,7 @@ export async function generateMetadata({
   if (!post) return {};
 
   return {
-    title: `${post.title} — PulseLogica Blog`,
+    title: `${post.title} — Pulselogica Blog`,
     description: post.excerpt,
     openGraph: {
       title: post.title,
@@ -724,8 +724,8 @@ export default function Nav() {
   return (
     <nav className="sticky top-0 z-50 backdrop-blur-xl bg-black/40 border-b border-white/10">
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-        <Link href="/" aria-label="PulseLogica home" className="flex items-center gap-2">
-          <Image src="/assets/logo.png" alt="PulseLogica" width={120} height={32} className="h-8 w-auto" />
+        <Link href="/" aria-label="Pulselogica home" className="flex items-center gap-2">
+          <Image src="/assets/logo.png" alt="Pulselogica" width={120} height={32} className="h-8 w-auto" />
         </Link>
         <div className="hidden md:flex gap-8 text-sm text-slate-400">
           {LINKS.map((link) => (

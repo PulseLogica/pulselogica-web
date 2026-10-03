@@ -30,7 +30,7 @@ export const caseStudies: CaseStudyDetail[] = [
     client: "Construction SME (Beachhead Tier 1 Client)",
     engagement: "Diagnostic + Implementation Sprint (Systemize)",
     title: "What Happens When the Business Only Runs Through You",
-    dek: "How PulseLogica documented, de-bottlenecked, and rebuilt the operating backbone of a founder-run construction company — before touching a single tool.",
+    dek: "How Pulselogica documented, de-bottlenecked, and rebuilt the operating backbone of a founder-run construction company — before touching a single tool.",
     challengeHeading: "A Business That Only Ran Through One Person",
     challengeBody:
       "A family-founded construction company. Like most project-based SMEs in the Philippines, it grew the way most do — through the owner's judgment, relationships, and memory. Bids got priced because the owner knew what materials cost that week. Crews got deployed because the owner knew who was reliable. Job handoffs happened in group chats and hallway conversations, not documents. That model works. It also has a ceiling: the business can only move as fast, and as far, as the owner can personally show up.",
@@ -75,7 +75,7 @@ export const caseStudies: CaseStudyDetail[] = [
     client: "QSR Brand (Early-Stage Launch)",
     engagement: "Systems Design + Implementation (Centralize-First)",
     title: "The Cost of Running Every Store the Same Way, On Purpose",
-    dek: "How PulseLogica centralized a QSR brand's operating stack before multi-location growth began — avoiding the drift most brands only notice after it's expensive to fix.",
+    dek: "How Pulselogica centralized a QSR brand's operating stack before multi-location growth began — avoiding the drift most brands only notice after it's expensive to fix.",
     challengeHeading: "Growth That Usually Forks Without Anyone Deciding To",
     challengeBody:
       "This brand is in active launch phase. This isn't a \"we 3x'd margin\" story — those numbers aren't there yet, and pretending otherwise wouldn't hold up. This is a cost-avoidance story: what centralizing operations early prevented, before the cracks that usually show up at store 3, 4, or 5 had a chance to form. Most QSR brands scale by trial and error — a first store figures out its own way of doing things, a second store copies most of it but not all, and by the third store, \"how we do things\" has quietly forked into two or three versions. Nobody planned that. It just happens when systems aren't centralized before growth starts.",
@@ -114,7 +114,7 @@ export const caseStudies: CaseStudyDetail[] = [
     ],
     ctaHeading: "Growing fast shouldn't mean growing apart.",
     ctaBody:
-      "PulseLogica designs the operating system before the second location opens — so every store you add runs the same way as the first, not its own version of it.",
+      "Pulselogica designs the operating system before the second location opens — so every store you add runs the same way as the first, not its own version of it.",
   },
 ];
 
