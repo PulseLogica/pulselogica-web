@@ -15,7 +15,7 @@ export const cases: CaseStudy[] = [
     challenge:
       "A family construction business ran the way a lot of them do — almost everything passed through the owner's head. Bids, crew assignments, job handoffs: mostly tribal knowledge and group chats, nothing written down. A manager was brought in once to help, but it didn't stick because there was no clear process to hand over. When the owner wasn't around, work slowed down.",
     solutionIntro:
-      "PulseLogica documented how the business actually operates, before bringing in any new tools:",
+      "Pulselogica documented how the business actually operates, before bringing in any new tools:",
     solution: [
       "Mapped the real process from bid to project close-out",
       "Identified who should own each step — not just do it, but be accountable for it",
@@ -36,7 +36,7 @@ export const cases: CaseStudy[] = [
     challenge:
       "Most food brands grow store by store, and each new branch ends up doing things a little differently — even if it started out copying the first one. Before long, no two stores run exactly the same way. This brand wanted to avoid that from the very beginning, before opening a second location.",
     solutionIntro:
-      "PulseLogica set up one shared operating system before the brand started expanding:",
+      "Pulselogica set up one shared operating system before the brand started expanding:",
     solution: [
       "One point-of-sale and one staff app used across every store, not a different setup per branch",
       "Inventory and sales reporting built centrally, so every store feeds the same system",

@@ -7,9 +7,9 @@ import LegalPageLayout, { LegalSection } from "@/components/LegalPageLayout";
 import BulletList from "@/components/ui/BulletList";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — PulseLogica",
+  title: "Privacy Policy — Pulselogica",
   description:
-    "How PulseLogica collects, processes, stores, and protects your personal information, in compliance with the Philippine Data Privacy Act of 2012.",
+    "How Pulselogica collects, processes, stores, and protects your personal information, in compliance with the Philippine Data Privacy Act of 2012.",
 };
 
 export default function PrivacyPolicyPage() {
@@ -17,16 +17,16 @@ export default function PrivacyPolicyPage() {
     <main>
       <ScrollReveal />
       <Nav />
-      <LegalPageLayout title="PulseLogica Website Privacy Policy" lastUpdated="July 24, 2026">
+      <LegalPageLayout title="Pulselogica Website Privacy Policy" lastUpdated="July 24, 2026">
         <p className="text-slate-400 leading-relaxed">
-          At PulseLogica (&ldquo;we,&rdquo; &ldquo;us,&rdquo; or &ldquo;our&rdquo;), we believe
+          At Pulselogica (&ldquo;we,&rdquo; &ldquo;us,&rdquo; or &ldquo;our&rdquo;), we believe
           that simple, practical operations begin with complete transparency and respect for your
           data privacy. This Privacy Policy outlines how we collect, process, store, and protect
           your personal information when you visit our website (https://www.pulselogica.com/) or
           use features such as our &ldquo;Book a Call&rdquo; function.
         </p>
         <p className="text-slate-400 leading-relaxed">
-          As a Personal Information Controller (PIC), PulseLogica handles all personal data in
+          As a Personal Information Controller (PIC), Pulselogica handles all personal data in
           strict compliance with the Data Privacy Act of 2012 (Republic Act No. 10173), its
           Implementing Rules and Regulations (IRR), and NPC Circular No. 2023-04 on Consent and
           Privacy Notices.
@@ -131,7 +131,7 @@ export default function PrivacyPolicyPage() {
         </LegalSection>
 
         <LegalSection heading="4. Data Sharing and Third-Party Service Providers">
-          <p>PulseLogica does not share your data except when necessary for site operations:</p>
+          <p>Pulselogica does not share your data except when necessary for site operations:</p>
           <BulletList
             items={[
               <>
@@ -159,7 +159,7 @@ export default function PrivacyPolicyPage() {
         <LegalSection heading="5. Data Breach Notification">
           <p>
             In the event of a personal data breach that poses a real risk of serious harm to
-            affected individuals, PulseLogica will notify the National Privacy Commission and
+            affected individuals, Pulselogica will notify the National Privacy Commission and
             affected data subjects within seventy-two (72) hours of discovering the breach, in
             accordance with Section 20(f) of the Data Privacy Act and its Implementing Rules and
             Regulations.
@@ -213,7 +213,7 @@ export default function PrivacyPolicyPage() {
             please contact us directly:
           </p>
           <p>
-            <strong className="text-white">Entity:</strong> PulseLogica
+            <strong className="text-white">Entity:</strong> Pulselogica
             <br />
             <strong className="text-white">Data Protection Officer:</strong> John Christopher Azcarraga
             <br />
@@ -228,9 +228,9 @@ export default function PrivacyPolicyPage() {
 
         <LegalSection heading="8. NPC Registration Status">
           <p>
-            PulseLogica&rsquo;s current data processing activities fall below the National Privacy
+            Pulselogica&rsquo;s current data processing activities fall below the National Privacy
             Commission&rsquo;s mandatory registration thresholds under NPC Circular No. 2022-04. In
-            accordance with Track 3 of the Circular, PulseLogica has filed a Sworn Declaration and
+            accordance with Track 3 of the Circular, Pulselogica has filed a Sworn Declaration and
             Undertaking for Exemption from Registration with the NPC.
           </p>
         </LegalSection>
