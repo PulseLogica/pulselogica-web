@@ -2,6 +2,13 @@
 
 ---
 
+## release: Next.js security hotfix - 2026-10-22
+
+### Bug Fixes
+- Updated Next.js from 15.5.20 to 15.5.28, patching two critical unauthenticated remote code execution advisories (GHSA-673q-mjm6-r5xr, GHSA-2464-fhr4-w9xw) disclosed in Vercel's October 14, 2026 out-of-band security update, along with a Server Actions denial-of-service issue and an SSG/ISR cache-poisoning CVE
+
+---
+
 ## release: Metricool tracking pixel - 2026-09-29
 
 ### What's New
