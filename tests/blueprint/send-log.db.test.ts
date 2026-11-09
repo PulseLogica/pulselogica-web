@@ -5,6 +5,7 @@
 //   BLUEPRINT_DB_TEST_SUPABASE_URL=http://127.0.0.1:55321 \
 //   BLUEPRINT_DB_TEST_SERVICE_KEY=<local secret key from `supabase status`> \
 //   BLUEPRINT_DB_TEST_PG_URL=postgresql://postgres:postgres@127.0.0.1:55322/postgres \
+//   BLUEPRINT_DB_TEST_ANON_KEY=<local anon/publishable key from `supabase status`> \
 //   bun test tests/blueprint
 //
 // The suite refuses to run against any non-local host.
@@ -19,9 +20,12 @@ const enabled = process.env.BLUEPRINT_DB_TEST === "1";
 const supabaseUrl = process.env.BLUEPRINT_DB_TEST_SUPABASE_URL ?? "";
 const serviceKey = process.env.BLUEPRINT_DB_TEST_SERVICE_KEY ?? "";
 const pgUrl = process.env.BLUEPRINT_DB_TEST_PG_URL ?? "";
+const anonKey = process.env.BLUEPRINT_DB_TEST_ANON_KEY ?? "";
 
 if (!enabled) {
   console.warn("[send-log.db.test] skipped: set BLUEPRINT_DB_TEST=1 with a local Supabase to run DB tests.");
+} else if (!anonKey) {
+  console.warn("[send-log.db.test] anon access test skipped: set BLUEPRINT_DB_TEST_ANON_KEY.");
 }
 
 function assertLocal(url: string, name: string): void {
@@ -313,6 +317,71 @@ describe.skipIf(!enabled)("send_log (local Supabase)", () => {
     await insertRow("sent", { clickup_task_id: "task-x" });
     expect(await store.hasSentRow("task-x")).toBe(true);
     expect(await store.hasSentRow("task-other")).toBe(false);
+  });
+
+  test("one send per task: approving a second row for the same task is a no-op", async () => {
+    const a = await awaitingRow();
+    const [b] = await sql`
+      insert into public.send_log ${sql({ clickup_task_id: a.clickup_task_id, status_change_id: "change-b", status: "awaiting_approval", approval_expires_at: new Date(Date.now() + HOUR) })}
+      returning *`;
+    expect((await store.approve(a.id, "U_KEVIN"))?.status).toBe("approved");
+    expect(await store.approve(b.id as string, "U_KEVIN")).toBeNull();
+    expect(await statusOf(b.id as string)).toBe("awaiting_approval");
+  });
+
+  test("one send per task: concurrent approvals of two rows for one task, exactly one wins", async () => {
+    const a = await awaitingRow();
+    const [b] = await sql`
+      insert into public.send_log ${sql({ clickup_task_id: a.clickup_task_id, status_change_id: "change-b", status: "awaiting_approval", approval_expires_at: new Date(Date.now() + HOUR) })}
+      returning *`;
+    const results = await Promise.all([store.approve(a.id, "U_KEVIN"), store.approve(b.id as string, "U_KEVIN")]);
+    expect(results.filter(Boolean)).toHaveLength(1);
+  });
+
+  test("one send per task: a failed send does not block approving a rerun", async () => {
+    const a = await awaitingRow();
+    await store.approve(a.id, "U_KEVIN");
+    await sql`update public.send_log set status = 'failed_permanent' where id = ${a.id}`;
+    const [b] = await sql`
+      insert into public.send_log ${sql({ clickup_task_id: a.clickup_task_id, status_change_id: "rerun", status: "awaiting_approval", approval_expires_at: new Date(Date.now() + HOUR) })}
+      returning *`;
+    expect((await store.approve(b.id as string, "U_KEVIN"))?.status).toBe("approved");
+  });
+
+  test("approve racing expireStale: exactly one of them changes the row", async () => {
+    for (let i = 0; i < 5; i++) {
+      const expiresAt = Date.now() + HOUR;
+      const row = await insertRow("awaiting_approval", { approval_expires_at: new Date(expiresAt) });
+      // The approver's clock is just before expiry, the cron's clock just after: both are eligible.
+      const approver = createSendLog(db, () => new Date(expiresAt - 1000));
+      const cron = createSendLog(db, () => new Date(expiresAt + 1000));
+      const [approved, expired] = await Promise.all([approver.approve(row.id, "U_KEVIN"), cron.expireStale()]);
+      const expiredThis = expired.some((r) => r.id === row.id);
+      expect(Boolean(approved) !== expiredThis).toBe(true);
+      expect(await statusOf(row.id)).toBe(approved ? "approved" : "expired");
+      await sql`truncate public.send_log`;
+    }
+  });
+
+  test.skipIf(!anonKey)("anon key cannot read or write send_log or call the claim functions", async () => {
+    const row = await insertRow("retry_scheduled", { next_retry_at: new Date(Date.now() - 60_000) });
+    const anon = createClient(supabaseUrl, anonKey, { auth: { persistSession: false } });
+
+    const read = await anon.from("send_log").select("*");
+    expect(read.error !== null || (read.data ?? []).length === 0).toBe(true);
+
+    const insert = await anon.from("send_log").insert({ clickup_task_id: "evil", status_change_id: "x", status: "pending" });
+    expect(insert.error).not.toBeNull();
+
+    const update = await anon.from("send_log").update({ status: "sent" }).eq("id", row.id).select("id");
+    expect(update.error !== null || (update.data ?? []).length === 0).toBe(true);
+
+    expect((await anon.rpc("claim_due_send_logs", { batch_size: 10 })).error).not.toBeNull();
+    expect((await anon.rpc("reset_stuck_send_logs")).error).not.toBeNull();
+
+    expect(await statusOf(row.id)).toBe("retry_scheduled");
+    const [{ count }] = await sql`select count(*)::int as count from public.send_log`;
+    expect(count).toBe(1);
   });
 
   test("markSent moves processing to sent once", async () => {

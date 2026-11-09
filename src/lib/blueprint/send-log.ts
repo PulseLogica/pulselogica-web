@@ -78,7 +78,12 @@ export function createSendLog(db: SupabaseClient, now: () => Date = () => new Da
       return data as SendLogRow;
     },
 
-    /** pending | retry_scheduled -> processing, prepare stage only. Null means not claimable. */
+    /**
+     * pending | retry_scheduled -> processing, prepare stage only. Null means not claimable.
+     * Used for rows the webhook or reconcile job just inserted. Rows returned by claimDue()
+     * are already claimed (status processing), so the pipeline takes those rows directly
+     * without calling this.
+     */
     async claimForPrepare(id: string) {
       return one("claimForPrepare", db.from(TABLE)
         .update({ status: "processing" })
@@ -95,12 +100,18 @@ export function createSendLog(db: SupabaseClient, now: () => Date = () => new Da
         .select("*").maybeSingle());
     },
 
-    /** awaiting_approval (not expired) -> approved. Null means duplicate click or expired. */
+    /**
+     * awaiting_approval (not expired) -> approved. Null means duplicate click, expired, or
+     * another row for the same task is already approved/sending/sent (one-send-per-task index).
+     */
     async approve(id: string, slackUserId: string) {
-      return one("approve", db.from(TABLE)
+      const { data, error } = await db.from(TABLE)
         .update({ status: "approved", stage: "send", attempt_count: 0, approved_by: slackUserId, approved_at: iso() })
         .eq("id", id).eq("status", "awaiting_approval").gt("approval_expires_at", iso())
-        .select("*").maybeSingle());
+        .select("*").maybeSingle();
+      if (error?.code === UNIQUE_VIOLATION) return null;
+      if (error) fail("approve", error);
+      return (data as SendLogRow | null) ?? null;
     },
 
     /** awaiting_approval (not expired) -> rejected. The schema has no rejected_by column. */
@@ -149,7 +160,10 @@ export function createSendLog(db: SupabaseClient, now: () => Date = () => new Da
         .select("*").maybeSingle());
     },
 
-    /** Claims due retry rows via claim_due_send_logs (SKIP LOCKED). */
+    /**
+     * Claims due retry rows via claim_due_send_logs (SKIP LOCKED). Returned rows are already
+     * in processing: run prepare or send on them directly, do not claim them again.
+     */
     async claimDue(batchSize = 10): Promise<SendLogRow[]> {
       const { data, error } = await db.rpc("claim_due_send_logs", { batch_size: batchSize });
       if (error) fail("claimDue", error);
