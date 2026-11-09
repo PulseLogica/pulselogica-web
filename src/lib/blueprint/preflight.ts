@@ -70,9 +70,13 @@ export async function checkTask(task: BlueprintTask, sendLog: SentRowReader): Pr
   return { ...task, clientEmail: email } as CheckedTask;
 }
 
-/** Check 5: a non-empty PDF under 30MB. */
+/**
+ * Check 5: a non-empty PDF under 30MB with an md5 (needed to detect changes after approval).
+ * The Drive search already filters on the PDF mimeType; the type check here is defensive.
+ */
 export function checkFile(file: DriveFile): DriveFile {
   if (file.mimeType !== PDF_MIME_TYPE) fail("DRIVE_BAD_FILE", `File type is ${file.mimeType || "unknown"}, not PDF`);
+  if (!file.md5Checksum?.trim()) fail("DRIVE_BAD_FILE", "File has no md5 checksum");
   if (!(file.size > 0)) fail("DRIVE_BAD_FILE", "File is empty");
   if (file.size >= MAX_PDF_BYTES) fail("DRIVE_BAD_FILE", `File is ${file.size} bytes, limit is under ${MAX_PDF_BYTES}`);
   return file;

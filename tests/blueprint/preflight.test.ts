@@ -106,7 +106,10 @@ describe("checkFile (check 5)", () => {
   });
 
   test.each([
-    ["not a PDF", { mimeType: "application/vnd.google-apps.document" }],
+    // Defensive: the Drive search already filters on the PDF mimeType, so this is checked directly.
+    ["not a PDF (defensive)", { mimeType: "application/vnd.google-apps.document" }],
+    ["missing md5", { md5Checksum: null }],
+    ["blank md5", { md5Checksum: " " }],
     ["empty", { size: 0 }],
     ["exactly 30MB", { size: 30_000_000 }],
     ["over 30MB", { size: 31_000_000 }],
