@@ -2,7 +2,7 @@
 // Writes live in send-log.ts; this module never changes a row.
 
 import type { PostgrestError, SupabaseClient } from "@supabase/supabase-js";
-import type { FailedStep } from "./errors";
+import { DbError, type FailedStep } from "./errors";
 
 export type SendLogStatus =
   | "pending" | "processing" | "retry_scheduled" | "awaiting_approval"
@@ -40,8 +40,10 @@ export interface SendLogRow {
 
 export const SEND_LOG_TABLE = "send_log";
 
+/** Throws a DbError; pipeline code turns it into a transient PipelineError via toPipelineError. */
 export function failQuery(op: string, error: PostgrestError): never {
-  throw new Error(`send_log.${op} failed: ${error.code ?? "unknown"} ${error.message}`);
+  const code = error.code ?? "unknown";
+  throw new DbError(op, code, `send_log.${op} failed: ${code} ${error.message}`);
 }
 
 export function createSendLogReads(db: SupabaseClient) {

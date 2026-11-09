@@ -1,8 +1,12 @@
 // Blueprint email automation: pipeline errors and classification (spec 10.1).
 
+import { BlueprintConfigError } from "./config";
+
 export type ErrorKind = "transient" | "permanent" | "auth";
 export type FailedStep =
   | "clickup_fetch"
+  /** ClickUp writes: comment and status update. */
+  | "clickup_update"
   | "drive_lookup"
   | "slack_post"
   | "drive_download"
@@ -24,6 +28,32 @@ export class PipelineError extends Error {
 
 export function isPipelineError(err: unknown): err is PipelineError {
   return err instanceof PipelineError;
+}
+
+/** A failed send_log query. Carries the Postgres/PostgREST code, never row data. */
+export class DbError extends Error {
+  constructor(public op: string, public dbCode: string, message: string) {
+    super(message);
+    this.name = "DbError";
+  }
+}
+
+/**
+ * Wraps anything thrown inside a step as a PipelineError, so failure handling sees one type.
+ * PipelineError passes through. Config errors are permanent (retrying will not fix env).
+ * DB errors and anything else unknown default to transient.
+ */
+export function toPipelineError(err: unknown, step: FailedStep): PipelineError {
+  if (err instanceof PipelineError) return err;
+  if (err instanceof BlueprintConfigError) {
+    return new PipelineError("permanent", "CONFIG_ERROR", step, err.message);
+  }
+  if (err instanceof DbError) {
+    return new PipelineError("transient", "DB_ERROR", step, err.message);
+  }
+  const name = err instanceof Error ? err.name : "";
+  if (name === "TimeoutError" || name === "AbortError") return networkError(err, step);
+  return new PipelineError("transient", "UNEXPECTED_ERROR", step, err instanceof Error ? err.message : String(err));
 }
 
 /**

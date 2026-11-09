@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import type { BlueprintTask } from "@/lib/blueprint/clickup";
 import type { DriveFile } from "@/lib/blueprint/drive";
-import { PipelineError } from "@/lib/blueprint/errors";
+import { DbError, PipelineError } from "@/lib/blueprint/errors";
 import {
   buildTemplateVariables,
   checkFile,
@@ -58,6 +58,11 @@ describe("checkTask (checks 1-3)", () => {
   test("already-sent task fails ALREADY_SENT before any field check", async () => {
     const err = await caught(checkTask({ ...task, clientEmail: undefined }, alreadySent));
     expect(err).toMatchObject({ kind: "permanent", code: "ALREADY_SENT", step: "preflight" });
+  });
+
+  test("a send_log read failure becomes a transient preflight error", async () => {
+    const broken: SentRowReader = { hasSentRow: async () => { throw new DbError("hasSentRow", "57014", "send_log.hasSentRow failed"); } };
+    expect(await caught(checkTask(task, broken))).toMatchObject({ kind: "transient", code: "DB_ERROR", step: "preflight" });
   });
 
   test("missing email is MISSING_FIELD:Client Email", async () => {

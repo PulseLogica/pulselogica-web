@@ -9,7 +9,7 @@
 import type { BlueprintTask } from "./clickup";
 import { CLICKUP_FIELDS, MAX_PDF_BYTES, PDF_MIME_TYPE, type BlueprintConfig } from "./config";
 import type { DriveFile } from "./drive";
-import { PipelineError } from "./errors";
+import { PipelineError, toPipelineError } from "./errors";
 
 /** A task that passed checks 1-3: every template field is present. */
 export type CheckedTask = BlueprintTask &
@@ -51,7 +51,13 @@ export function isValidEmail(email: string): boolean {
 
 /** Checks 1-3. Run before any Drive call. */
 export async function checkTask(task: BlueprintTask, sendLog: SentRowReader): Promise<CheckedTask> {
-  if (await sendLog.hasSentRow(task.id)) fail("ALREADY_SENT", "A Blueprint was already sent for this task");
+  let sent: boolean;
+  try {
+    sent = await sendLog.hasSentRow(task.id);
+  } catch (err) {
+    throw toPipelineError(err, "preflight");
+  }
+  if (sent) fail("ALREADY_SENT", "A Blueprint was already sent for this task");
 
   const email = task.clientEmail?.trim();
   if (!email) fail(`MISSING_FIELD:${CLICKUP_FIELDS.clientEmail}`);

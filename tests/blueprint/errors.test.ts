@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { classifyHttpStatus, httpError, networkError, PipelineError } from "@/lib/blueprint/errors";
+import { BlueprintConfigError } from "@/lib/blueprint/config";
+import { classifyHttpStatus, DbError, httpError, networkError, PipelineError, toPipelineError } from "@/lib/blueprint/errors";
 
 describe("classifyHttpStatus", () => {
   test.each([408, 429, 500, 502, 503, 599])("%d is transient", (status) => {
@@ -36,5 +37,30 @@ describe("error builders", () => {
       code: "NETWORK_ERROR",
       step: "slack_post",
     });
+  });
+});
+
+describe("toPipelineError", () => {
+  test("passes PipelineError through unchanged", () => {
+    const err = new PipelineError("auth", "HTTP_401", "drive_lookup");
+    expect(toPipelineError(err, "preflight")).toBe(err);
+  });
+
+  test("config errors are permanent", () => {
+    expect(toPipelineError(new BlueprintConfigError(["RESEND_API_KEY"]), "resend_send")).toMatchObject({
+      kind: "permanent", code: "CONFIG_ERROR", step: "resend_send",
+    });
+  });
+
+  test("DB errors are transient", () => {
+    expect(toPipelineError(new DbError("hasSentRow", "57014", "send_log.hasSentRow failed"), "preflight")).toMatchObject({
+      kind: "transient", code: "DB_ERROR", step: "preflight",
+    });
+  });
+
+  test("timeouts are network errors; anything else is transient UNEXPECTED_ERROR", () => {
+    const timeout = Object.assign(new Error("t"), { name: "TimeoutError" });
+    expect(toPipelineError(timeout, "clickup_fetch").code).toBe("NETWORK_TIMEOUT");
+    expect(toPipelineError("boom", "clickup_update")).toMatchObject({ kind: "transient", code: "UNEXPECTED_ERROR", message: "boom" });
   });
 });
