@@ -23,6 +23,17 @@ export const CLICKUP_FIELDS = {
   criticalDimensions: "Critical Dimensions",
 } as const;
 
+export const CLICKUP_API_BASE = "https://api.clickup.com/api/v2";
+
+/** Drive naming rule (spec 10.5): `{Company Name}_Operational_Blueprint_Locked.pdf`. */
+export const DRIVE_BLUEPRINT_SUFFIX = "_Operational_Blueprint_Locked.pdf";
+/** Folders with exactly this name, and everything under them, are never searched. */
+export const DRIVE_ARCHIVE_FOLDER_NAME = "_Archive";
+export const DRIVE_READONLY_SCOPE = "https://www.googleapis.com/auth/drive.readonly";
+export const PDF_MIME_TYPE = "application/pdf";
+/** Preflight check 5: file size must be above 0 and under 30MB (decimal megabytes). */
+export const MAX_PDF_BYTES = 30_000_000;
+
 /** Retry rules (spec section 11). */
 export const MAX_ATTEMPTS = 3;
 /** Delay after attempt N fails, indexed by N - 1. Attempt 3 is terminal. */

@@ -4,42 +4,17 @@
 import type { PostgrestError, SupabaseClient } from "@supabase/supabase-js";
 import { getSupabaseServerClient } from "@/lib/supabase";
 import { APPROVAL_TTL_MS, MAX_ATTEMPTS, RETRY_DELAYS_MS } from "./config";
-import type { ErrorKind, FailedStep, PipelineError } from "./errors";
+import type { ErrorKind, PipelineError } from "./errors";
 import { redactEmails } from "./log";
+import {
+  createSendLogReads,
+  failQuery as fail,
+  SEND_LOG_TABLE as TABLE,
+  type SendLogRow,
+  type SendLogStatus,
+} from "./send-log-read";
 
-export type SendLogStatus =
-  | "pending" | "processing" | "retry_scheduled" | "awaiting_approval"
-  | "approved" | "rejected" | "expired" | "sent"
-  | "failed_permanent" | "failed_exhausted";
-export type SendLogStage = "prepare" | "send";
-
-export interface SendLogRow {
-  id: string;
-  clickup_task_id: string;
-  status_change_id: string;
-  status: SendLogStatus;
-  stage: SendLogStage;
-  attempt_count: number;
-  next_retry_at: string | null;
-  previous_clickup_status: string | null;
-  company_name: string | null;
-  client_email: string | null;
-  drive_file_id: string | null;
-  drive_filename: string | null;
-  approved_md5: string | null;
-  drive_modified_time: string | null;
-  slack_channel_id: string | null;
-  slack_message_ts: string | null;
-  approval_expires_at: string | null;
-  approved_by: string | null;
-  approved_at: string | null;
-  last_error_code: string | null;
-  last_error_message: string | null;
-  failed_step: FailedStep | null;
-  resend_message_id: string | null;
-  created_at: string;
-  updated_at: string;
-}
+export type { SendLogRow, SendLogStage, SendLogStatus } from "./send-log-read";
 
 export type ApprovalFields = Pick<
   SendLogRow,
@@ -56,7 +31,6 @@ export interface FailureUpdate {
   next_retry_at: string | null;
 }
 
-const TABLE = "send_log";
 const UNIQUE_VIOLATION = "23505";
 const MAX_ERROR_MESSAGE = 500;
 
@@ -78,12 +52,10 @@ export function decideFailure(kind: ErrorKind, attemptsBefore: number, now: Date
   };
 }
 
-function fail(op: string, error: PostgrestError): never {
-  throw new Error(`send_log.${op} failed: ${error.code ?? "unknown"} ${error.message}`);
-}
-
 export function createSendLog(db: SupabaseClient, now: () => Date = () => new Date()) {
   const iso = () => now().toISOString();
+  const reads = createSendLogReads(db);
+  const { getById } = reads;
 
   async function one(op: string, query: PromiseLike<{ data: unknown; error: PostgrestError | null }>) {
     const { data, error } = await query;
@@ -91,12 +63,8 @@ export function createSendLog(db: SupabaseClient, now: () => Date = () => new Da
     return (data as SendLogRow | null) ?? null;
   }
 
-  async function getById(id: string): Promise<SendLogRow | null> {
-    return one("getById", db.from(TABLE).select("*").eq("id", id).maybeSingle());
-  }
-
   return {
-    getById,
+    ...reads,
 
     /** Inserts a pending row. Returns null if this (task, status change) already exists. */
     async insertIfNew(taskId: string, changeId: string, previousStatus: string | null) {
@@ -108,6 +76,14 @@ export function createSendLog(db: SupabaseClient, now: () => Date = () => new Da
       if (error?.code === UNIQUE_VIOLATION) return null;
       if (error) fail("insertIfNew", error);
       return data as SendLogRow;
+    },
+
+    /** pending | retry_scheduled -> processing, prepare stage only. Null means not claimable. */
+    async claimForPrepare(id: string) {
+      return one("claimForPrepare", db.from(TABLE)
+        .update({ status: "processing" })
+        .eq("id", id).in("status", ["pending", "retry_scheduled"]).eq("stage", "prepare")
+        .select("*").maybeSingle());
     },
 
     /** processing -> awaiting_approval, with a fresh 24h expiry and attempt counter. */

@@ -284,6 +284,37 @@ describe.skipIf(!enabled)("send_log (local Supabase)", () => {
     expect(await store.recordFailure(crypto.randomUUID(), err)).toBeNull();
   });
 
+  test("claimForPrepare claims pending or retry_scheduled prepare rows exactly once", async () => {
+    for (const status of ["pending", "retry_scheduled"]) {
+      const row = await insertRow(status);
+      const results = await Promise.all([store.claimForPrepare(row.id), store.claimForPrepare(row.id)]);
+      expect(results.filter(Boolean)).toHaveLength(1);
+      expect(results.find(Boolean)).toMatchObject({ id: row.id, status: "processing", stage: "prepare" });
+      expect(await store.claimForPrepare(row.id)).toBeNull();
+    }
+  });
+
+  test("claimForPrepare refuses send-stage rows and other statuses", async () => {
+    const sendStage = await insertRow("retry_scheduled", { stage: "send" });
+    expect(await store.claimForPrepare(sendStage.id)).toBeNull();
+    expect(await statusOf(sendStage.id)).toBe("retry_scheduled");
+    for (const status of ["processing", "awaiting_approval", "approved", "sent", "failed_permanent", "rejected"]) {
+      const row = await insertRow(status);
+      expect(await store.claimForPrepare(row.id)).toBeNull();
+      expect(await statusOf(row.id)).toBe(status);
+    }
+    expect(await store.claimForPrepare(crypto.randomUUID())).toBeNull();
+  });
+
+  test("hasSentRow is true only when some row for the task is sent", async () => {
+    await insertRow("failed_permanent", { clickup_task_id: "task-x" });
+    await insertRow("rejected", { clickup_task_id: "task-x" });
+    expect(await store.hasSentRow("task-x")).toBe(false);
+    await insertRow("sent", { clickup_task_id: "task-x" });
+    expect(await store.hasSentRow("task-x")).toBe(true);
+    expect(await store.hasSentRow("task-other")).toBe(false);
+  });
+
   test("markSent moves processing to sent once", async () => {
     const row = await insertRow("processing");
     expect(await store.markSent(row.id, "re_123")).toMatchObject({ status: "sent", resend_message_id: "re_123" });

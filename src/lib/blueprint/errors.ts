@@ -6,7 +6,9 @@ export type FailedStep =
   | "drive_lookup"
   | "slack_post"
   | "drive_download"
-  | "resend_send";
+  | "resend_send"
+  /** Preflight checks 1-3 and 5 (spec section 9). Check 4 fails under drive_lookup. */
+  | "preflight";
 
 export class PipelineError extends Error {
   constructor(
