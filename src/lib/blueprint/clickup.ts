@@ -4,6 +4,7 @@
 
 import { CLICKUP_API_BASE, CLICKUP_FIELDS, CLICKUP_STATUS, getBlueprintConfig } from "./config";
 import { PipelineError, httpError, networkError, type FailedStep } from "./errors";
+import { bpWarn } from "./log";
 
 export type FetchLike = (url: string, init: RequestInit) => Promise<Response>;
 
@@ -38,18 +39,20 @@ export interface RawTask {
   custom_fields?: RawField[];
 }
 
-const STEP: FailedStep = "clickup_fetch";
+const READ: FailedStep = "clickup_fetch";
+const WRITE: FailedStep = "clickup_update";
 const TIMEOUT_MS = 15_000;
 /** ClickUp returns at most 100 tasks per page. */
 const PAGE_SIZE = 100;
 /** Safety cap on list paging. */
-const MAX_PAGES = 50;
+export const MAX_PAGES = 50;
 
 const isNumeric = (s: string) => s.trim() !== "" && Number.isFinite(Number(s));
 
 /**
- * Maps a drop_down value to its option name. The value may be the option's
- * orderindex (number or numeric string), its id, or, failing those, an array index.
+ * Maps a drop_down value to its option name. The value may be the option's id or its
+ * orderindex (number or numeric string). Array position is used only when no option
+ * carries an orderindex; otherwise an unmatched value is absent, never a guess.
  */
 function dropdownName(field: RawField): string | undefined {
   const options = field.type_config?.options ?? [];
@@ -61,8 +64,9 @@ function dropdownName(field: RawField): string | undefined {
   }
   if (typeof value !== "number" && typeof value !== "string") return undefined;
   const n = Number(value);
-  const byOrder = options.find((o) => o.orderindex !== undefined && Number(o.orderindex) === n);
-  return byOrder?.name ?? (Number.isInteger(n) ? options[n]?.name : undefined);
+  const hasOrderIndex = options.some((o) => o.orderindex !== undefined && o.orderindex !== null);
+  if (hasOrderIndex) return options.find((o) => o.orderindex != null && Number(o.orderindex) === n)?.name;
+  return Number.isInteger(n) ? options[n]?.name : undefined;
 }
 
 /** A custom field's value as trimmed text, or undefined when missing or empty. */
@@ -82,7 +86,7 @@ function fieldNumber(fields: RawField[], name: string): number | undefined {
 }
 
 export function parseTask(raw: RawTask): BlueprintTask {
-  if (!raw.id) throw new PipelineError("permanent", "CLICKUP_BAD_RESPONSE", STEP, "Task response has no id");
+  if (!raw.id) throw new PipelineError("permanent", "CLICKUP_BAD_RESPONSE", READ, "Task response has no id");
   const fields = raw.custom_fields ?? [];
   return {
     id: raw.id,
@@ -109,7 +113,7 @@ export function createClickUp(opts: ClickUpOptions) {
   const doFetch: FetchLike = opts.fetch ?? ((url, init) => fetch(url, init));
   const base = opts.baseUrl ?? CLICKUP_API_BASE;
 
-  async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
+  async function request<T>(step: FailedStep, method: string, path: string, body?: unknown): Promise<T> {
     let res: Response;
     try {
       res = await doFetch(`${base}${path}`, {
@@ -119,13 +123,13 @@ export function createClickUp(opts: ClickUpOptions) {
         signal: AbortSignal.timeout(TIMEOUT_MS),
       });
     } catch (err) {
-      throw networkError(err, STEP);
+      throw networkError(err, step);
     }
-    if (!res.ok) throw httpError(res.status, STEP, undefined, `ClickUp ${method} failed with HTTP ${res.status}`);
+    if (!res.ok) throw httpError(res.status, step, undefined, `ClickUp ${method} failed with HTTP ${res.status}`);
     try {
       return (await res.json()) as T;
     } catch {
-      throw new PipelineError("transient", "CLICKUP_BAD_RESPONSE", STEP, `ClickUp ${method} returned invalid JSON`);
+      throw new PipelineError("transient", "CLICKUP_BAD_RESPONSE", step, `ClickUp ${method} returned invalid JSON`);
     }
   }
 
@@ -134,17 +138,17 @@ export function createClickUp(opts: ClickUpOptions) {
   return {
     /** GET /task/{id}, custom fields parsed by name. */
     async getTask(taskId: string): Promise<BlueprintTask> {
-      return parseTask(await request<RawTask>("GET", taskPath(taskId)));
+      return parseTask(await request<RawTask>(READ, "GET", taskPath(taskId)));
     },
 
     /** POST /task/{id}/comment. */
     async comment(taskId: string, text: string): Promise<void> {
-      await request("POST", `${taskPath(taskId)}/comment`, { comment_text: text, notify_all: false });
+      await request(WRITE, "POST", `${taskPath(taskId)}/comment`, { comment_text: text, notify_all: false });
     },
 
     /** PUT /task/{id} with the new status name. */
     async setStatus(taskId: string, statusName: string): Promise<void> {
-      await request("PUT", taskPath(taskId), { status: statusName });
+      await request(WRITE, "PUT", taskPath(taskId), { status: statusName });
     },
 
     /** All tasks in the blueprint list with status `Ready to Send`, across every page. */
@@ -154,7 +158,7 @@ export function createClickUp(opts: ClickUpOptions) {
       const tasks: BlueprintTask[] = [];
       for (let page = 0; page < MAX_PAGES; page++) {
         const path = `/list/${encodeURIComponent(opts.listId)}/task?statuses[]=${status}&page=${page}`;
-        const data = await request<{ tasks?: RawTask[]; last_page?: boolean }>("GET", path);
+        const data = await request<{ tasks?: RawTask[]; last_page?: boolean }>(READ, "GET", path);
         const batch = data.tasks ?? [];
         for (const raw of batch) {
           const task = parseTask(raw);
@@ -162,8 +166,9 @@ export function createClickUp(opts: ClickUpOptions) {
         }
         // ClickUp sends `last_page`; if it is ever missing, a short page means the end.
         const lastPage = data.last_page ?? batch.length < PAGE_SIZE;
-        if (lastPage || batch.length === 0) break;
+        if (lastPage || batch.length === 0) return tasks;
       }
+      bpWarn("clickup.list_page_cap", { listId: opts.listId, pages: MAX_PAGES, tasks: tasks.length });
       return tasks;
     },
   };

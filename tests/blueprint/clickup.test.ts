@@ -1,5 +1,5 @@
-import { describe, expect, test } from "bun:test";
-import { createClickUp, parseTask, type FetchLike, type RawField } from "@/lib/blueprint/clickup";
+import { describe, expect, spyOn, test } from "bun:test";
+import { createClickUp, MAX_PAGES, parseTask, type FetchLike, type RawField } from "@/lib/blueprint/clickup";
 import { PipelineError } from "@/lib/blueprint/errors";
 
 interface Call { url: string; init: RequestInit }
@@ -99,6 +99,16 @@ describe("parseTask", () => {
     expect(parseTask(rawTask([trackField("unknown-id")])).track).toBeUndefined();
   });
 
+  test("with orderindex present, an unmatched value never falls back to array position", () => {
+    const field = {
+      name: "Track",
+      type: "drop_down",
+      type_config: { options: [{ id: "x", name: "A", orderindex: 5 }, { id: "y", name: "B", orderindex: 6 }] },
+      value: 1,
+    };
+    expect(parseTask(rawTask([field])).track).toBeUndefined();
+  });
+
   test.each([
     ["number", 4, 4],
     ["numeric string", "4", 4],
@@ -158,8 +168,28 @@ describe("ClickUp HTTP client", () => {
       throw new TypeError("fetch failed");
     });
     const err = await caught(api.comment("task-1", "hello"));
-    expect(err).toMatchObject({ kind: "transient", code: "NETWORK_ERROR", step: "clickup_fetch" });
+    expect(err).toMatchObject({ kind: "transient", code: "NETWORK_ERROR", step: "clickup_update" });
     expect(err.message).not.toContain("pk_test");
+  });
+
+  test.each([
+    ["comment", (api: ReturnType<typeof createClickUp>) => api.comment("task-1", "x")],
+    ["setStatus", (api: ReturnType<typeof createClickUp>) => api.setStatus("task-1", "Send Failed")],
+  ] as const)("%s failures use step clickup_update", async (_name, call) => {
+    const { api } = client(() => json({}, 503));
+    expect(await caught(call(api))).toMatchObject({ kind: "transient", code: "HTTP_503", step: "clickup_update" });
+  });
+
+  test("listReadyToSend stops at the page cap with a warning", async () => {
+    const warn = spyOn(console, "warn").mockImplementation(() => {});
+    try {
+      const { api, calls } = client(() => json({ tasks: [rawTask()], last_page: false }));
+      expect(await api.listReadyToSend()).toHaveLength(MAX_PAGES);
+      expect(calls).toHaveLength(MAX_PAGES);
+      expect(String(warn.mock.calls[0][0])).toContain("blueprint.clickup.list_page_cap");
+    } finally {
+      warn.mockRestore();
+    }
   });
 
   test("comment and setStatus send the documented bodies", async () => {
