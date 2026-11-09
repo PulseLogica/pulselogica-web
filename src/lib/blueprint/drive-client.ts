@@ -1,9 +1,10 @@
 // Blueprint email automation: googleapis adapter for drive.ts, service-account auth.
 // Read-only scope. Separate from src/lib/google-drive.ts (OAuth, PayMongo unlock flow).
 
+import crypto from "crypto";
 import { google } from "googleapis";
 import { DRIVE_READONLY_SCOPE } from "./config";
-import type { DriveApi } from "./drive";
+import type { DriveApi } from "./drive-types";
 import { PipelineError } from "./errors";
 
 const REQUEST_TIMEOUT_MS = 30_000;
@@ -13,8 +14,8 @@ interface ServiceAccountKey {
   private_key: string;
 }
 
-/** Parses the key without ever echoing its content into an error. */
-function parseKey(json: string): ServiceAccountKey {
+/** Parses and validates the key without ever echoing its content into an error. */
+export function parseKey(json: string): ServiceAccountKey {
   let parsed: unknown;
   try {
     parsed = JSON.parse(json);
@@ -24,6 +25,11 @@ function parseKey(json: string): ServiceAccountKey {
   const key = parsed as Partial<ServiceAccountKey> | null;
   if (!key || typeof key.client_email !== "string" || typeof key.private_key !== "string") {
     throw new PipelineError("auth", "DRIVE_CREDENTIALS_INVALID", "drive_lookup", "Service account key lacks client_email or private_key");
+  }
+  try {
+    crypto.createPrivateKey(key.private_key);
+  } catch {
+    throw new PipelineError("auth", "DRIVE_CREDENTIALS_INVALID", "drive_lookup", "Service account private_key is not a valid key");
   }
   return { client_email: key.client_email, private_key: key.private_key };
 }

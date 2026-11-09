@@ -8,48 +8,25 @@ import {
   PDF_MIME_TYPE,
   getBlueprintConfig,
 } from "./config";
-import { PipelineError, httpError, networkError, type FailedStep } from "./errors";
+import crypto from "crypto";
+import { classifyDriveError } from "./drive-errors";
+import type { DriveApi, DriveFile, RawDriveFile } from "./drive-types";
+import { PipelineError } from "./errors";
+import { bpWarn } from "./log";
 
-/** Shape of a Drive v3 file resource as returned by the API (all fields optional). */
-export interface RawDriveFile {
-  id?: string | null;
-  name?: string | null;
-  mimeType?: string | null;
-  size?: string | null;
-  md5Checksum?: string | null;
-  modifiedTime?: string | null;
-}
-
-export interface DriveListParams {
-  q: string;
-  fields: string;
-  pageSize: number;
-  pageToken?: string;
-  supportsAllDrives: true;
-  includeItemsFromAllDrives: true;
-}
-
-/** The three Drive calls this module needs. Real adapter in drive-client.ts; fakes in tests. */
-export interface DriveApi {
-  list(params: DriveListParams): Promise<{ files?: RawDriveFile[] | null; nextPageToken?: string | null }>;
-  getMetadata(fileId: string, fields: string): Promise<RawDriveFile>;
-  getMedia(fileId: string): Promise<ArrayBuffer | Uint8Array>;
-}
-
-export interface DriveFile {
-  id: string;
-  name: string;
-  mimeType: string;
-  size: number;
-  md5Checksum: string | null;
-  modifiedTime: string | null;
-}
+export type { DriveApi, DriveFile, DriveListParams, RawDriveFile } from "./drive-types";
 
 export const FOLDER_MIME_TYPE = "application/vnd.google-apps.folder";
 /** Folder ids per `'id' in parents` query. Keeps queries well under Drive's length limit. */
 export const PARENTS_BATCH_SIZE = 20;
 const PAGE_SIZE = 1000;
+/** Per-query page cap. Hitting it truncates results (fails safe as no match) and logs a warning. */
+export const MAX_LIST_PAGES = 50;
 const FILE_FIELDS = "id,name,mimeType,size,md5Checksum,modifiedTime";
+const ARCHIVE_NAME = DRIVE_ARCHIVE_FOLDER_NAME.toLowerCase();
+
+/** `_Archive` match is trimmed and case-insensitive. */
+const isArchive = (name: string | null | undefined) => name?.trim().toLowerCase() === ARCHIVE_NAME;
 
 /** Escapes a value for a single-quoted Drive query string: backslash first, then quote. */
 export function escapeDriveQuery(value: string): string {
@@ -58,28 +35,6 @@ export function escapeDriveQuery(value: string): string {
 
 export function expectedBlueprintName(companyName: string): string {
   return `${companyName.trim()}${DRIVE_BLUEPRINT_SUFFIX}`;
-}
-
-function statusOf(err: unknown): number | undefined {
-  if (typeof err !== "object" || err === null) return undefined;
-  const e = err as { status?: unknown; code?: unknown; response?: { status?: unknown } };
-  for (const candidate of [e.status, e.response?.status, e.code]) {
-    if (typeof candidate === "number" && candidate >= 400 && candidate <= 599) return candidate;
-  }
-  return undefined;
-}
-
-/**
- * Classifies a googleapis (gaxios) error by HTTP status: 401/403 auth, 408/429/5xx
- * transient, other 4xx permanent; no status means a network failure, transient.
- * Raw messages are dropped because they can carry request URLs and query text.
- */
-export function classifyDriveError(err: unknown, step: FailedStep): PipelineError {
-  if (err instanceof PipelineError) return err;
-  const status = statusOf(err);
-  if (status !== undefined) return httpError(status, step, undefined, `Drive request failed with HTTP ${status}`);
-  const net = networkError(err, step);
-  return new PipelineError(net.kind, net.code, step, `Drive request failed (${net.code})`);
 }
 
 function toDriveFile(raw: RawDriveFile): DriveFile {
@@ -109,13 +64,14 @@ export function createDrive(api: DriveApi, rootFolderId: string) {
   async function listAll(q: string, fileFields: string): Promise<RawDriveFile[]> {
     const out: RawDriveFile[] = [];
     let pageToken: string | undefined;
-    do {
+    for (let pages = 0; pages < MAX_LIST_PAGES; pages++) {
       try {
         const page = await api.list({
           q,
           fields: `nextPageToken, files(${fileFields})`,
           pageSize: PAGE_SIZE,
           pageToken,
+          corpora: "allDrives",
           supportsAllDrives: true,
           includeItemsFromAllDrives: true,
         });
@@ -124,11 +80,13 @@ export function createDrive(api: DriveApi, rootFolderId: string) {
       } catch (err) {
         throw classifyDriveError(err, "drive_lookup");
       }
-    } while (pageToken);
+      if (!pageToken) return out;
+    }
+    bpWarn("drive.list_page_cap", { pages: MAX_LIST_PAGES, results: out.length });
     return out;
   }
 
-  /** BFS over the folder tree. Folders named exactly `_Archive` and their subtrees are skipped. */
+  /** BFS over the folder tree. `_Archive` folders (any case, trimmed) and their subtrees are skipped. */
   async function walk(root: string): Promise<string[]> {
     const seen = new Set([root]);
     let frontier = [root];
@@ -137,7 +95,7 @@ export function createDrive(api: DriveApi, rootFolderId: string) {
       for (const batch of chunks(frontier, PARENTS_BATCH_SIZE)) {
         const q = `mimeType = '${FOLDER_MIME_TYPE}' and trashed = false and (${parentsClause(batch)})`;
         for (const folder of await listAll(q, "id,name")) {
-          if (!folder.id || seen.has(folder.id) || folder.name === DRIVE_ARCHIVE_FOLDER_NAME) continue;
+          if (!folder.id || seen.has(folder.id) || isArchive(folder.name)) continue;
           seen.add(folder.id);
           next.push(folder.id);
         }
@@ -189,16 +147,24 @@ export function createDrive(api: DriveApi, rootFolderId: string) {
       return hits[0];
     },
 
-    /** Metadata (for md5) and media fetched in the same step, so the caller can compare md5. */
-    async download(fileId: string): Promise<{ buffer: Buffer; md5: string | null }> {
+    /**
+     * Downloads the file. `md5` is computed over the downloaded bytes, so it always describes
+     * exactly what would be attached. A trashed file counts as changed after approval.
+     */
+    async download(fileId: string): Promise<{ buffer: Buffer; md5: string }> {
+      let meta: RawDriveFile;
+      let data: ArrayBuffer | Uint8Array;
       try {
-        const meta = await api.getMetadata(fileId, FILE_FIELDS);
-        const data = await api.getMedia(fileId);
-        const buffer = data instanceof ArrayBuffer ? Buffer.from(data) : Buffer.from(data.buffer, data.byteOffset, data.byteLength);
-        return { buffer, md5: meta.md5Checksum ?? null };
+        meta = await api.getMetadata(fileId, `${FILE_FIELDS},trashed`);
+        if (meta.trashed) {
+          throw new PipelineError("permanent", "FILE_CHANGED_AFTER_APPROVAL", "drive_download", "Drive file is in the trash");
+        }
+        data = await api.getMedia(fileId);
       } catch (err) {
         throw classifyDriveError(err, "drive_download");
       }
+      const buffer = data instanceof ArrayBuffer ? Buffer.from(data) : Buffer.from(data.buffer, data.byteOffset, data.byteLength);
+      return { buffer, md5: crypto.createHash("md5").update(buffer).digest("hex") };
     },
   };
 }

@@ -12,6 +12,7 @@ export interface FakeItem {
   size?: number;
   md5?: string;
   content?: string;
+  trashed?: boolean;
 }
 
 const FOLDER = "application/vnd.google-apps.folder";
@@ -59,7 +60,7 @@ export function fakeDrive(items: FakeItem[], opts: { pageSize?: number; fail?: (
     async getMetadata(fileId) {
       const item = all.find((i) => i.id === fileId);
       if (!item) throw Object.assign(new Error("File not found"), { status: 404 });
-      return { id: item.id, name: item.name, mimeType: item.mimeType, size: String(item.size), md5Checksum: item.md5 };
+      return { id: item.id, name: item.name, mimeType: item.mimeType, size: String(item.size), md5Checksum: item.md5, trashed: item.trashed ?? false };
     },
     async getMedia(fileId) {
       const item = all.find((i) => i.id === fileId);

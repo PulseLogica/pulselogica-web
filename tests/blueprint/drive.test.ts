@@ -1,10 +1,8 @@
-import { describe, expect, test } from "bun:test";
-import {
-  PARENTS_BATCH_SIZE,
-  classifyDriveError,
-  createDrive,
-  escapeDriveQuery,
-} from "@/lib/blueprint/drive";
+import { describe, expect, spyOn, test } from "bun:test";
+import { createHash, generateKeyPairSync } from "crypto";
+import { parseKey } from "@/lib/blueprint/drive-client";
+import { MAX_LIST_PAGES, PARENTS_BATCH_SIZE, createDrive, escapeDriveQuery } from "@/lib/blueprint/drive";
+import { classifyDriveError } from "@/lib/blueprint/drive-errors";
 import { PipelineError, type ErrorKind } from "@/lib/blueprint/errors";
 import { fakeDrive, folder, type FakeItem } from "./fake-drive";
 
@@ -17,6 +15,9 @@ const tree: FakeItem[] = [
   folder("archive", "_Archive", ROOT),
   folder("old", "Old Clients", "archive"),
   folder("archive-lower", "_archive", ROOT),
+  folder("archive-spaced", " _ARCHIVE ", "clients"),
+  folder("archive-sub", "Inside", "archive-spaced"),
+  folder("not-archive", "_Archived", ROOT),
 ];
 
 async function caught(promise: Promise<unknown>): Promise<PipelineError> {
@@ -41,10 +42,32 @@ describe("escapeDriveQuery", () => {
 });
 
 describe("walkFolders", () => {
-  test("BFS skips folders named exactly _Archive and their subtrees", async () => {
+  test("BFS skips _Archive folders (any case, trimmed) and their subtrees", async () => {
     const { drive: d } = drive(tree);
     const ids = await d.walkFolders(ROOT);
-    expect(ids.sort()).toEqual(["acme", "archive-lower", "clients", "root"]);
+    expect(ids.sort()).toEqual(["acme", "clients", "not-archive", "root"]);
+  });
+
+  test("every listing uses corpora allDrives with shared-drive flags", async () => {
+    const { drive: d, calls } = drive(tree);
+    await caught(d.findLockedBlueprint("Acme Corp"));
+    expect(calls.length).toBeGreaterThan(0);
+    for (const c of calls) {
+      expect(c).toMatchObject({ corpora: "allDrives", supportsAllDrives: true, includeItemsFromAllDrives: true });
+    }
+  });
+
+  test("stops at the page cap with a warning", async () => {
+    const warn = spyOn(console, "warn").mockImplementation(() => {});
+    try {
+      const many = Array.from({ length: MAX_LIST_PAGES + 5 }, (_, i) => folder(`f${i}`, `Folder ${i}`, ROOT));
+      const { drive: d, calls } = drive(many, { pageSize: 1 });
+      expect((await d.walkFolders()).length).toBe(MAX_LIST_PAGES + 1);
+      expect(calls.filter((c) => c.q.includes("'root' in parents"))).toHaveLength(MAX_LIST_PAGES);
+      expect(String(warn.mock.calls[0][0])).toContain("blueprint.drive.list_page_cap");
+    } finally {
+      warn.mockRestore();
+    }
   });
 
   test("is cached per instance, so a second lookup does not re-walk", async () => {
@@ -163,11 +186,18 @@ describe("findLockedBlueprint", () => {
 });
 
 describe("download", () => {
-  test("returns the buffer and md5 from metadata", async () => {
-    const { drive: d } = drive([{ id: "pdf-1", name: NAME, parent: "acme", md5: "abc", content: "%PDF-data" }]);
+  test("returns the buffer and an md5 computed over the downloaded bytes", async () => {
+    const { drive: d } = drive([{ id: "pdf-1", name: NAME, parent: "acme", md5: "stale-metadata-md5", content: "%PDF-data" }]);
     const { buffer, md5 } = await d.download("pdf-1");
     expect(buffer.toString()).toBe("%PDF-data");
-    expect(md5).toBe("abc");
+    expect(md5).toBe(createHash("md5").update("%PDF-data").digest("hex"));
+  });
+
+  test("a trashed file is FILE_CHANGED_AFTER_APPROVAL (permanent)", async () => {
+    const { drive: d } = drive([{ id: "pdf-1", name: NAME, parent: "acme", trashed: true }]);
+    expect(await caught(d.download("pdf-1"))).toMatchObject({
+      kind: "permanent", code: "FILE_CHANGED_AFTER_APPROVAL", step: "drive_download",
+    });
   });
 
   test("errors are classified under drive_download", async () => {
@@ -189,10 +219,57 @@ describe("classifyDriveError", () => {
     expect(classifyDriveError(Object.assign(new Error("x"), shape), "drive_lookup").kind).toBe(kind);
   });
 
+  test.each([
+    ["errors[0].reason", { status: 403, errors: [{ reason: "rateLimitExceeded" }] }],
+    ["response.data.error.errors", { response: { status: 403, data: { error: { errors: [{ reason: "userRateLimitExceeded" }] } } } }],
+  ])("403 rate limit via %s is transient", (_label, shape) => {
+    expect(classifyDriveError(Object.assign(new Error("x"), shape), "drive_lookup")).toMatchObject({
+      kind: "transient", code: "DRIVE_RATE_LIMITED",
+    });
+  });
+
+  test("403 with another reason stays auth", () => {
+    const err = Object.assign(new Error("x"), { status: 403, errors: [{ reason: "insufficientFilePermissions" }] });
+    expect(classifyDriveError(err, "drive_lookup").kind).toBe("auth");
+  });
+
+  test.each([
+    ["invalid_grant in body, HTTP 400", { response: { status: 400, data: { error: "invalid_grant" } } }, "OAUTH_INVALID_GRANT"],
+    ["unauthorized_client in message, no status", { message: "unauthorized_client: Client is unauthorized" }, "OAUTH_UNAUTHORIZED_CLIENT"],
+  ])("OAuth %s is auth", (_label, shape, code) => {
+    expect(classifyDriveError(Object.assign(new Error(), shape), "drive_download")).toMatchObject({ kind: "auth", code });
+  });
+
   test("network errors are transient and drop the raw message", () => {
     const err = Object.assign(new Error("request to https://www.googleapis.com/drive/v3/files?q=Acme failed"), { code: "ECONNRESET" });
     const out = classifyDriveError(err, "drive_download");
     expect(out).toMatchObject({ kind: "transient", code: "NETWORK_ERROR", step: "drive_download" });
     expect(out.message).not.toContain("googleapis");
+  });
+});
+
+describe("parseKey (service account JSON)", () => {
+  const { privateKey } = generateKeyPairSync("rsa", { modulusLength: 2048 });
+  const pem = privateKey.export({ type: "pkcs8", format: "pem" }).toString();
+
+  test("accepts a key with client_email and a valid private_key", () => {
+    expect(parseKey(JSON.stringify({ client_email: "sa@proj.iam.gserviceaccount.com", private_key: pem })).client_email)
+      .toBe("sa@proj.iam.gserviceaccount.com");
+  });
+
+  test.each([
+    ["not JSON", "{oops"],
+    ["missing private_key", JSON.stringify({ client_email: "sa@x.com" })],
+    ["garbage private_key", JSON.stringify({ client_email: "sa@x.com", private_key: "-----BEGIN PRIVATE KEY-----\nnope\n-----END PRIVATE KEY-----" })],
+  ])("%s is an auth error that never echoes the key", (_label, json) => {
+    let err: unknown;
+    try {
+      parseKey(json);
+    } catch (e) {
+      err = e;
+    }
+    expect(err).toBeInstanceOf(PipelineError);
+    expect(err).toMatchObject({ kind: "auth", code: "DRIVE_CREDENTIALS_INVALID" });
+    expect((err as Error).message).not.toContain("BEGIN");
   });
 });
