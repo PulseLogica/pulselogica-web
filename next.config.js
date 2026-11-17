@@ -1,12 +1,12 @@
 const isDevelopment = process.env.NODE_ENV === 'development';
 
 function buildContentSecurityPolicy() {
-  const scriptSrc = ["'self'", "'unsafe-inline'", 'https://www.googletagmanager.com'];
+  const scriptSrc = ["'self'", "'unsafe-inline'", 'https://*.googletagmanager.com'];
   const connectSrc = [
     "'self'",
     'https://*.google-analytics.com',
     'https://*.analytics.google.com',
-    'https://www.googletagmanager.com',
+    'https://*.googletagmanager.com',
   ];
 
   if (isDevelopment) {
@@ -18,7 +18,7 @@ function buildContentSecurityPolicy() {
     "default-src 'self'",
     `script-src ${scriptSrc.join(' ')}`,
     "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: https://tracker.metricool.com https://www.google-analytics.com https://www.googletagmanager.com",
+    "img-src 'self' data: https://tracker.metricool.com https://*.google-analytics.com https://*.googletagmanager.com",
     "font-src 'self'",
     `connect-src ${connectSrc.join(' ')}`,
     'frame-src https://www.youtube.com https://www.youtube-nocookie.com',
