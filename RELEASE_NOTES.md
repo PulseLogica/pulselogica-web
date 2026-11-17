@@ -2,6 +2,22 @@
 
 ---
 
+## release: Security headers and Next.js 15.5.29 - 2026-11-17
+
+### What's New
+- Added a `security.txt` file at `/.well-known/security.txt` so security researchers know how to report issues (contact, expiry date, preferred languages)
+
+### Bug Fixes
+- Updated Next.js from 15.5.28 to 15.5.29, applying the November 3, 2026 security patch
+- Added security headers to every page: `X-Frame-Options: DENY` (blocks the site from being embedded in other sites), `X-Content-Type-Options: nosniff`, and `Referrer-Policy: strict-origin-when-cross-origin`
+
+### Internal / Technical
+- Added a Content-Security-Policy in report-only mode. It logs violations in the browser console without blocking anything, as a first step before enforcing it. Allowed sources: the site itself, Google Analytics / Google Tag Manager, the Metricool pixel, and YouTube embeds
+- Pinned `next` to an exact version and updated both `bun.lock` and `package-lock.json`
+- Brought the October 22 hotfix back into `dev` so `dev` and `main` no longer diverge
+
+---
+
 ## release: Next.js security hotfix - 2026-10-22
 
 ### Bug Fixes
