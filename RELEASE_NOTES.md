@@ -2,6 +2,22 @@
 
 ---
 
+## release: Blog refresh and markdown rendering - 2026-11-27
+
+### Bug Fixes
+- New blog posts published in Supabase now appear on `/blog` and on their own page within about a minute, without a redeploy. Previously the blog pages were built once at deploy time and never refreshed
+- Blog posts now render their markdown correctly: tables display as real tables, bulleted and numbered lists show their markers, and horizontal rules, subheadings, images and bold text are styled
+- A post that starts with a `# Title` heading matching its own title no longer shows the title twice. Any other top-level heading inside a post renders one level down, so each post page has a single main heading
+- Links to other websites inside a post now open in a new tab
+
+### Internal / Technical
+- `/blog` and `/blog/[slug]` use incremental static regeneration with a 60-second revalidate. New slugs render on demand
+- `getPublishedPosts` and `getPostBySlug` now throw on Supabase errors, so a failed refresh keeps the last good page instead of caching an empty list or a 404
+- Added `remark-gfm` for GitHub-flavored markdown and updated both `bun.lock` and `package-lock.json`
+- Added a `stripLeadingTitle` helper in `src/lib/blog-markdown.ts`. Wide tables scroll inside their own wrapper on small screens
+
+---
+
 ## release: Security headers and Next.js 15.5.29 - 2026-11-17
 
 ### What's New

@@ -194,4 +194,76 @@ body {
     margin-bottom: 0.5em;
     color: #D1D8E0;
   }
+  .blog-content ul { list-style: disc; }
+  .blog-content ol { list-style: decimal; }
+  .blog-content ul ul,
+  .blog-content ol ol,
+  .blog-content ul ol,
+  .blog-content ol ul {
+    margin-top: 0.5em;
+    margin-bottom: 0;
+  }
+  .blog-content ul ul { list-style: circle; }
+  .blog-content ul ul ul { list-style: square; }
+  .blog-content ol ol { list-style: lower-alpha; }
+  .blog-content li > p { margin-bottom: 0.5em; }
+  .blog-content li::marker { color: var(--color-slate); }
+  .blog-content ol > li::marker { font-variant-numeric: tabular-nums; }
+
+  .blog-content strong { color: var(--color-white); font-weight: 600; }
+  .blog-content em { font-style: italic; }
+  .blog-content del { color: var(--color-slate); text-decoration: line-through; text-decoration-thickness: 1px; }
+
+  .blog-content hr {
+    border: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin: 2.5em 0;
+  }
+  .blog-content h4 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-white);
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+  }
+  .blog-content img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin: 1.75em auto;
+  }
+
+  .blog-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+    margin: 1.75em 0;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+  }
+  .blog-content table {
+    width: 100%;
+    min-width: 32rem;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    font-variant-numeric: tabular-nums;
+  }
+  .blog-content thead th {
+    color: var(--color-white);
+    font-weight: 600;
+    text-align: left;
+    padding: 0.75em 1em;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+    white-space: nowrap;
+  }
+  .blog-content td {
+    color: #D1D8E0;
+    text-align: left;
+    padding: 0.75em 1em;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    vertical-align: top;
+  }
+  .blog-content tbody tr:last-child td { border-bottom: 0; }
 }
