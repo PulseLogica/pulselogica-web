@@ -1,13 +1,32 @@
 import Image from "next/image";
 import Link from "next/link";
-import Markdown from "react-markdown";
+import Markdown, { type Components } from "react-markdown";
+import remarkGfm from "remark-gfm";
 import type { BlogPost, BlogPostListItem } from "@/types/blog-types";
 import { BOOK_STRATEGY_SESSION_URL } from "@/lib/constants";
+import { stripLeadingTitle } from "@/lib/blog-markdown";
 
 function formatDate(iso: string | null) {
   if (!iso) return "";
   return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 }
+
+const EXTERNAL_URL = /^https?:\/\//i;
+
+const markdownComponents: Components = {
+  h1: ({ node: _node, ...props }) => <h2 {...props} />,
+  a: ({ node: _node, href, ...props }) =>
+    href && EXTERNAL_URL.test(href) ? (
+      <a href={href} target="_blank" rel="noopener noreferrer" {...props} />
+    ) : (
+      <a href={href} {...props} />
+    ),
+  table: ({ node: _node, ...props }) => (
+    <div className="blog-table-wrap">
+      <table {...props} />
+    </div>
+  ),
+};
 
 export default function BlogPostDetail({
   post,
@@ -48,7 +67,9 @@ export default function BlogPostDetail({
 
       <article className="px-6 py-16">
         <div className="blog-content max-w-[680px] mx-auto">
-          <Markdown>{post.content_markdown}</Markdown>
+          <Markdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+            {stripLeadingTitle(post.content_markdown, post.title)}
+          </Markdown>
         </div>
       </article>
 
