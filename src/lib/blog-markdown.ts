@@ -1,7 +1,9 @@
+// Setext headings (Title followed by ===) are intentionally not handled.
 const ATX_H1 = /^#[ \t]+(.+?)(?:[ \t]+#+)?[ \t]*$/;
 
 function normalizeTitle(text: string): string {
   return text
+    .replace(/[*_`]/g, "")
     .toLowerCase()
     .replace(/\s+/g, " ")
     .replace(/[\s.,;:!?…]+$/u, "")
