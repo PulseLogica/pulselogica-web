@@ -30,12 +30,12 @@ export async function getPublishedPosts(): Promise<BlogPostListItem[]> {
     .lte("published_at", new Date().toISOString())
     .order("published_at", { ascending: false });
 
-  if (error || !data) {
+  if (error) {
     console.error("Failed to fetch published blog posts:", error);
-    return [];
+    throw new Error(`Failed to fetch published blog posts: ${error.message}`);
   }
 
-  return data.map((row) =>
+  return (data ?? []).map((row) =>
     BlogPostListItemSchema.parse({
       ...row,
       category: Array.isArray(row.category) ? row.category[0] ?? null : row.category,
@@ -55,9 +55,12 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
     .lte("published_at", new Date().toISOString())
     .maybeSingle();
 
-  if (error || !data) {
-    return null;
+  if (error) {
+    console.error(`Failed to fetch blog post "${slug}":`, error);
+    throw new Error(`Failed to fetch blog post "${slug}": ${error.message}`);
   }
+
+  if (!data) return null;
 
   return BlogPostSchema.parse({
     ...data,

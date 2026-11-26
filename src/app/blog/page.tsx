@@ -5,6 +5,8 @@ import BackToTop from "@/components/BackToTop";
 import BlogIndex from "@/components/Blog/BlogIndex";
 import { getPublishedPosts } from "@/lib/blog";
 
+export const revalidate = 60;
+
 export const metadata = {
   title: "Blog — Pulselogica",
   description: "Notes on systems, operations, and running a business that doesn't depend on you.",
