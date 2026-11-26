@@ -17,9 +17,9 @@ const markdownComponents: Components = {
   h1: ({ node: _node, ...props }) => <h2 {...props} />,
   a: ({ node: _node, href, ...props }) =>
     href && EXTERNAL_URL.test(href) ? (
-      <a href={href} target="_blank" rel="noopener noreferrer" {...props} />
+      <a {...props} href={href} target="_blank" rel="noopener noreferrer" />
     ) : (
-      <a href={href} {...props} />
+      <a {...props} href={href} />
     ),
   table: ({ node: _node, ...props }) => (
     <div className="blog-table-wrap">
