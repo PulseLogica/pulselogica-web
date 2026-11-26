@@ -6,6 +6,8 @@ import BackToTop from "@/components/BackToTop";
 import BlogPostDetail from "@/components/Blog/BlogPostDetail";
 import { getPostBySlug, getAllPublishedSlugs, getPublishedPosts } from "@/lib/blog";
 
+export const revalidate = 60;
+
 export async function generateStaticParams() {
   const slugs = await getAllPublishedSlugs();
   return slugs.map((slug) => ({ slug }));
